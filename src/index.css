@@ -1,0 +1,251 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --neon-blue: #00f3ff;
+  --neon-purple: #bc13fe;
+  --dark-bg: #0a0a1f;
+  --panel-bg: #1a1a3a;
+}
+
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  body {
+    background-color: var(--dark-bg);
+    color: #fff;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    @apply antialiased;
+    @apply min-h-screen;
+    @apply overflow-hidden;
+  }
+
+  ::selection {
+    @apply bg-[#00f3ff]/30 text-white;
+  }
+
+  #root {
+    @apply h-screen;
+    @apply overflow-hidden;
+  }
+}
+
+.cyberpunk-gradient {
+  background: linear-gradient(45deg, var(--neon-blue), var(--neon-purple));
+}
+
+.neon-glow {
+  box-shadow: 0 0 15px rgba(0, 243, 255, 0.3),
+              0 0 30px rgba(0, 243, 255, 0.2),
+              0 0 45px rgba(188, 19, 254, 0.2);
+}
+
+.neon-text {
+  text-shadow: 0 0 15px rgba(0, 243, 255, 0.7),
+               0 0 30px rgba(0, 243, 255, 0.5);
+}
+
+.cyber-grid {
+  background-image: 
+    linear-gradient(rgba(0, 243, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 243, 255, 0.05) 1px, transparent 1px);
+  background-size: 30px 30px;
+  @apply relative;
+}
+
+.cyber-grid::before {
+  content: '';
+  @apply absolute inset-0 bg-gradient-to-b from-[#0a0a1f] via-transparent to-[#0a0a1f] pointer-events-none z-10 opacity-90;
+}
+
+.cyber-border {
+  position: relative;
+  border: 1px solid rgba(0, 243, 255, 0.3);
+  transition: all 0.3s ease;
+}
+
+.cyber-border:hover {
+  border-color: rgba(0, 243, 255, 0.6);
+}
+
+.cyber-border::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border: 2px solid transparent;
+  border-radius: inherit;
+  background: linear-gradient(45deg, var(--neon-blue), var(--neon-purple)) border-box;
+  -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: destination-out;
+  mask-composite: exclude;
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+}
+
+.cyber-border:hover::before {
+  opacity: 1;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(26, 26, 58, 0.3);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 243, 255, 0.3);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 243, 255, 0.5);
+}
+
+/* Glass effect */
+.glass-panel {
+  background: rgba(10, 10, 31, 0.95);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 243, 255, 0.2);
+  box-shadow: 0 4px 24px -1px rgba(0, 243, 255, 0.1);
+}
+
+/* Animations */
+@keyframes pulse {
+  0% { opacity: 0.4; }
+  50% { opacity: 1; }
+  100% { opacity: 0.4; }
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+.animate-soft-pulse {
+  animation: pulse 2s infinite;
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* Custom components */
+.chat-input {
+  background: rgba(10, 10, 31, 0.95) !important;
+  border: 1px solid rgba(0, 243, 255, 0.4) !important;
+  transition: all 0.3s ease;
+  color: #fff !important;
+}
+
+.chat-input::placeholder {
+  color: rgba(0, 243, 255, 0.5) !important;
+}
+
+.chat-input:focus {
+  border-color: rgba(0, 243, 255, 0.8) !important;
+  box-shadow: 0 0 0 3px rgba(0, 243, 255, 0.2);
+  background: rgba(26, 26, 58, 0.95) !important;
+}
+
+.message-bubble {
+  background: rgba(10, 10, 31, 0.95);
+  border: 1px solid rgba(0, 243, 255, 0.2);
+  backdrop-filter: blur(8px);
+  @apply shadow-lg shadow-[#00f3ff]/10;
+}
+
+.message-bubble.assistant {
+  background: rgba(0, 243, 255, 0.1);
+  border-color: rgba(0, 243, 255, 0.3);
+}
+
+/* Mobile optimizations */
+@media (max-width: 640px) {
+  .cyber-grid {
+    background-size: 20px 20px;
+  }
+}
+
+/* Responsive text sizes */
+@media (max-width: 768px) {
+  .text-4xl {
+    font-size: 1.875rem;
+    line-height: 2.25rem;
+  }
+  
+  .text-xl {
+    font-size: 1.125rem;
+    line-height: 1.75rem;
+  }
+}
+
+/* Touch device optimizations */
+@media (hover: none) {
+  .cyber-border:hover {
+    border-color: rgba(0, 243, 255, 0.3);
+  }
+  
+  .cyber-border:active {
+    border-color: rgba(0, 243, 255, 0.6);
+  }
+}
+
+/* Prose styles for markdown content */
+.prose {
+  @apply text-[#fff];
+}
+
+.prose strong {
+  @apply text-[#00f3ff] font-semibold;
+}
+
+.prose a {
+  @apply text-[#00f3ff] underline decoration-[#00f3ff]/30 hover:decoration-[#00f3ff];
+}
+
+.prose p {
+  @apply leading-7;
+}
+
+.prose ul {
+  @apply list-disc list-inside;
+}
+
+.prose ol {
+  @apply list-decimal list-inside;
+}
+
+.prose code {
+  @apply text-[#00f3ff] bg-[#1a1a3a] px-1.5 py-0.5 rounded text-sm;
+}
+
+.prose pre {
+  @apply bg-[#1a1a3a] p-4 rounded-lg overflow-x-auto;
+}
+
+.prose blockquote {
+  @apply border-l-4 border-[#00f3ff]/30 pl-4 italic text-[#fff]/80;
+}
+
+.prose h1, .prose h2, .prose h3, .prose h4 {
+  @apply text-[#00f3ff] font-semibold;
+}
+
+/* Fix overflow issues */
+.overflow-fix {
+  min-height: 0;
+  height: 100%;
+}
