@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Layout } from './components/Layout';
 import { useChatState } from './hooks/useChatState';
 import { useVoice } from './hooks/useVoice';
 import { useMistralClient } from './hooks/useMistralClient';
 import { useMessageHandler } from './hooks/useMessageHandler';
 import { useCodeExecution } from './hooks/useCodeExecution';
+import { parseDocument } from './utils/documentParser';
 
 function App() {
   const {
@@ -15,11 +16,13 @@ function App() {
     handleCreateSession,
     handleDeleteSession,
     handleRenameSession,
+    handleChangeModel,
     addMessage,
   } = useChatState();
 
   const [showSettings, setShowSettings] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isProcessingFile, setIsProcessingFile] = useState(false);
 
   const { voiceConfig, setVoiceConfig, initializeVoice, speakMessage } = useVoice(setChatState);
   const mistralClient = useMistralClient();
@@ -31,6 +34,34 @@ function App() {
     speakMessage
   );
   const { handleExecuteCode } = useCodeExecution(updateCurrentSession);
+
+  const handleUploadDocument = async (file: File) => {
+    try {
+      setIsProcessingFile(true);
+      setChatState(prev => ({ ...prev, isLoading: true }));
+      
+      const text = await parseDocument(file);
+      
+      // Create a message with the file content
+      const fileType = file.type.startsWith('image/') ? 'image' : 'document';
+      const message = `I've uploaded ${fileType === 'image' ? 'an image' : 'a document'} named "${file.name}". Please analyze its contents:\n\n${text}`;
+      
+      handleSendMessage(message);
+    } catch (error) {
+      setChatState(prev => ({
+        ...prev,
+        isLoading: false,
+        error: 'Failed to parse file. Please try again with a supported format.',
+      }));
+    } finally {
+      setIsProcessingFile(false);
+    }
+  };
+
+  // Initialize voice when the app loads
+  useEffect(() => {
+    initializeVoice();
+  }, [initializeVoice]);
 
   const currentSession = getCurrentSession();
 
@@ -55,6 +86,9 @@ function App() {
       setIsMobileMenuOpen={setIsMobileMenuOpen}
       onExecuteCode={handleExecuteCode}
       onSendMessage={handleSendMessage}
+      onUploadDocument={handleUploadDocument}
+      onChangeModel={handleChangeModel}
+      isProcessingFile={isProcessingFile}
     />
   );
 }

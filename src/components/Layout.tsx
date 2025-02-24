@@ -5,7 +5,7 @@ import { Header } from './Header';
 import { VoiceSettings } from './VoiceSettings';
 import { ChatContainer } from './ChatContainer';
 import { ChatInput } from './ChatInput';
-import { ChatSession, VoiceConfig } from '../types';
+import { ChatSession, VoiceConfig, MistralModel } from '../types';
 
 interface LayoutProps {
   sessions: ChatSession[];
@@ -17,6 +17,7 @@ interface LayoutProps {
   error: string | null;
   isSpeaking: boolean;
   currentSession: ChatSession;
+  isProcessingFile: boolean;
   onSelectSession: (id: string) => void;
   onCreateSession: (name: string) => void;
   onDeleteSession: (id: string) => void;
@@ -27,6 +28,8 @@ interface LayoutProps {
   setIsMobileMenuOpen: (open: boolean) => void;
   onExecuteCode: (blockId: string, code: string) => void;
   onSendMessage: (message: string, isVoice?: boolean) => void;
+  onUploadDocument: (file: File) => void;
+  onChangeModel: (sessionId: string, model: MistralModel) => void;
 }
 
 export const Layout: React.FC<LayoutProps> = ({
@@ -39,6 +42,7 @@ export const Layout: React.FC<LayoutProps> = ({
   error,
   isSpeaking,
   currentSession,
+  isProcessingFile,
   onSelectSession,
   onCreateSession,
   onDeleteSession,
@@ -49,8 +53,20 @@ export const Layout: React.FC<LayoutProps> = ({
   setIsMobileMenuOpen,
   onExecuteCode,
   onSendMessage,
+  onUploadDocument,
+  onChangeModel,
 }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  const handleRegenerate = () => {
+    const lastUserMessage = [...currentSession.messages]
+      .reverse()
+      .find(message => message.role === 'user');
+    
+    if (lastUserMessage) {
+      onSendMessage(lastUserMessage.content, lastUserMessage.isVoice);
+    }
+  };
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -59,7 +75,6 @@ export const Layout: React.FC<LayoutProps> = ({
 
   return (
     <div className="h-screen flex bg-[#0a0a1f] cyber-grid overflow-hidden">
-      {/* Sidebar Toggle Button */}
       <button
         onClick={toggleSidebar}
         className="fixed top-4 left-4 z-50 p-2.5 bg-[#1a1a3a] cyber-border rounded-xl neon-glow hover:bg-[#1a1a3a]/80 transition-colors md:hidden"
@@ -71,7 +86,6 @@ export const Layout: React.FC<LayoutProps> = ({
         )}
       </button>
 
-      {/* Sidebar */}
       <div
         className={`fixed inset-y-0 left-0 transform ${
           isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
@@ -87,10 +101,10 @@ export const Layout: React.FC<LayoutProps> = ({
           onCreateSession={onCreateSession}
           onDeleteSession={onDeleteSession}
           onRenameSession={onRenameSession}
+          onChangeModel={onChangeModel}
         />
       </div>
 
-      {/* Main Content */}
       <div className="flex-1 flex flex-col h-screen overflow-hidden">
         <div className="container mx-auto px-3 md:px-6 flex flex-col h-full max-w-5xl pt-16 md:pt-4 pb-3 md:pb-4">
           <Header
@@ -115,21 +129,25 @@ export const Layout: React.FC<LayoutProps> = ({
                 error={error}
                 isSpeaking={isSpeaking}
                 onExecuteCode={onExecuteCode}
+                onRegenerate={handleRegenerate}
               />
             </div>
 
             <div className="mt-3 md:mt-4">
               <ChatInput
                 onSend={onSendMessage}
+                onUploadDocument={onUploadDocument}
                 disabled={isLoading}
                 isSpeaking={isSpeaking}
+                currentModel={currentSession.model}
+                onChangeModel={(model) => onChangeModel(currentSession.id, model)}
+                isProcessingFile={isProcessingFile}
               />
             </div>
           </div>
         </div>
       </div>
 
-      {/* Overlay */}
       {isSidebarOpen && (
         <div
           className="fixed inset-0 bg-black/50 backdrop-blur-sm z-30 md:hidden"

@@ -20,6 +20,7 @@ export interface ChatSession {
   name: string;
   createdAt: number;
   messages: Message[];
+  model: MistralModel;
 }
 
 export interface ChatState {
@@ -36,3 +37,14 @@ export interface VoiceConfig {
   rate: number;
   volume: number;
 }
+
+export type MistralModel = 
+  | 'mistral-tiny'
+  | 'mistral-small'
+  | 'mistral-medium';
+
+export const MISTRAL_MODELS: MistralModel[] = [
+  'mistral-tiny',
+  'mistral-small',
+  'mistral-medium'
+];

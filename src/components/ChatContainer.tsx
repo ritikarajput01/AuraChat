@@ -9,6 +9,7 @@ interface ChatContainerProps {
   error: string | null;
   isSpeaking: boolean;
   onExecuteCode: (blockId: string, code: string) => void;
+  onRegenerate?: () => void;
 }
 
 export const ChatContainer: React.FC<ChatContainerProps> = ({
@@ -17,7 +18,14 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({
   error,
   isSpeaking,
   onExecuteCode,
+  onRegenerate,
 }) => {
+  // Find the last assistant message
+  const lastAssistantMessageIndex = [...messages].reverse().findIndex(m => m.role === 'assistant');
+  const lastAssistantMessage = lastAssistantMessageIndex !== -1 
+    ? messages.length - 1 - lastAssistantMessageIndex 
+    : -1;
+
   return (
     <div className="flex-1 flex flex-col h-full overflow-hidden">
       <div className="flex-1 overflow-y-auto rounded-xl md:rounded-2xl bg-[#1a1a3a]/90 backdrop-blur-xl border border-[#00f3ff]/20 shadow-lg shadow-[#00f3ff]/5">
@@ -29,7 +37,7 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({
               </div>
               <div className="max-w-2xl space-y-3 md:space-y-4">
                 <h2 className="text-2xl md:text-5xl font-bold bg-gradient-to-r from-[#00f3ff] to-[#bc13fe] bg-clip-text text-transparent drop-shadow-[0_0_10px_rgba(0,243,255,0.5)]">
-                  AI Code Assistant
+                  AuraChat
                 </h2>
                 <p className="text-lg md:text-2xl text-[#00f3ff] drop-shadow-[0_0_8px_rgba(0,243,255,0.3)]">
                   Your intelligent coding companion. Ask me anything about programming!
@@ -55,6 +63,8 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({
                 message={message}
                 isSpeaking={isSpeaking && index === messages.length - 1}
                 onExecuteCode={onExecuteCode}
+                onRegenerate={index === lastAssistantMessage ? onRegenerate : undefined}
+                isLastAssistantMessage={index === lastAssistantMessage}
               />
             ))}
           </div>

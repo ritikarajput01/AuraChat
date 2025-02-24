@@ -33,7 +33,7 @@ export function useMessageHandler(
       const messages = [...currentSession.messages, newMessage];
       
       const response = await mistralClient.current.chat({
-        model: 'mistral-tiny',
+        model: currentSession.model,
         messages: messages.map(msg => ({
           role: msg.role,
           content: msg.content,
@@ -51,12 +51,17 @@ export function useMessageHandler(
 
       addMessage(assistantMessage);
 
+      // Always speak the response if the input was voice
       if (isVoice) {
-        speakMessage(assistantMessage.content);
+        // Small delay to ensure smooth transition
+        setTimeout(() => {
+          speakMessage(text);
+        }, 100);
       }
 
       setChatState(prev => ({ ...prev, isLoading: false }));
     } catch (error) {
+      console.error('AI response error:', error);
       setChatState(prev => ({
         ...prev,
         isLoading: false,

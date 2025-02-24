@@ -1,19 +1,23 @@
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import { Message } from '../types';
-import { Bot, User, Volume2 } from 'lucide-react';
+import { Bot, User, Volume2, RefreshCw } from 'lucide-react';
 import { CodeBlock } from './CodeBlock';
 
 interface ChatMessageProps {
   message: Message;
   isSpeaking?: boolean;
   onExecuteCode: (blockId: string, code: string) => void;
+  onRegenerate?: () => void;
+  isLastAssistantMessage?: boolean;
 }
 
 export const ChatMessage: React.FC<ChatMessageProps> = ({ 
   message, 
   isSpeaking,
   onExecuteCode,
+  onRegenerate,
+  isLastAssistantMessage,
 }) => {
   const isBot = message.role === 'assistant';
 
@@ -91,6 +95,17 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
           >
             {message.content}
           </ReactMarkdown>
+          {isBot && isLastAssistantMessage && onRegenerate && (
+            <div className="mt-4 flex justify-end">
+              <button
+                onClick={onRegenerate}
+                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-[#00f3ff] bg-[#00f3ff]/10 hover:bg-[#00f3ff]/20 rounded-lg transition-colors cyber-border"
+              >
+                <RefreshCw className="w-4 h-4" />
+                Regenerate response
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>

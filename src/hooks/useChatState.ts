@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ChatState, ChatSession, Message } from '../types';
+import { ChatState, ChatSession, Message, MistralModel } from '../types';
 
 const STORAGE_KEY = 'ai-chat-state';
 
@@ -16,15 +16,24 @@ const generateSessionName = (message: string): string => {
 
 export function useChatState() {
   const [chatState, setChatState] = useState<ChatState>(() => {
-    const savedState = localStorage.getItem(STORAGE_KEY);
-    if (savedState) {
-      return JSON.parse(savedState);
+    try {
+      const savedState = localStorage.getItem(STORAGE_KEY);
+      if (savedState) {
+        const parsedState = JSON.parse(savedState);
+        if (parsedState.sessions && parsedState.sessions.length > 0) {
+          return parsedState;
+        }
+      }
+    } catch (error) {
+      console.error('Error loading chat state:', error);
     }
+
     const initialSession: ChatSession = {
       id: 'default',
       name: 'New Chat',
       createdAt: Date.now(),
       messages: [],
+      model: 'mistral-tiny',
     };
     return {
       sessions: [initialSession],
@@ -36,11 +45,15 @@ export function useChatState() {
   });
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(chatState));
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(chatState));
+    } catch (error) {
+      console.error('Error saving chat state:', error);
+    }
   }, [chatState]);
 
   const getCurrentSession = () => {
-    return chatState.sessions.find(s => s.id === chatState.currentSessionId)!;
+    return chatState.sessions.find(s => s.id === chatState.currentSessionId) || chatState.sessions[0];
   };
 
   const updateCurrentSession = (updater: (session: ChatSession) => ChatSession) => {
@@ -52,36 +65,74 @@ export function useChatState() {
     }));
   };
 
-  const handleCreateSession = (name: string = 'New Chat') => {
+  const handleCreateSession = (name: string = 'New Chat', model: MistralModel = 'mistral-tiny') => {
     const newSession: ChatSession = {
       id: Math.random().toString(36).substr(2, 9),
       name,
       createdAt: Date.now(),
       messages: [],
+      model,
     };
     setChatState(prev => ({
       ...prev,
       sessions: [...prev.sessions, newSession],
       currentSessionId: newSession.id,
     }));
+    return newSession.id;
   };
 
   const handleDeleteSession = (sessionId: string) => {
     setChatState(prev => {
       const newSessions = prev.sessions.filter(s => s.id !== sessionId);
+      
+      // If we deleted all sessions, create a new one
+      if (newSessions.length === 0) {
+        const newSession: ChatSession = {
+          id: Math.random().toString(36).substr(2, 9),
+          name: 'New Chat',
+          createdAt: Date.now(),
+          messages: [],
+          model: 'mistral-tiny',
+        };
+        return {
+          ...prev,
+          sessions: [newSession],
+          currentSessionId: newSession.id,
+        };
+      }
+
+      // If we deleted the current session, switch to the last remaining session
+      const newCurrentId = prev.currentSessionId === sessionId
+        ? newSessions[newSessions.length - 1].id
+        : prev.currentSessionId;
+
       return {
         ...prev,
         sessions: newSessions,
-        currentSessionId: newSessions[0]?.id || '',
+        currentSessionId: newCurrentId,
       };
     });
   };
 
   const handleRenameSession = (sessionId: string, newName: string) => {
+    const trimmedName = newName.trim();
+    if (!trimmedName) return;
+
     setChatState(prev => ({
       ...prev,
       sessions: prev.sessions.map(s =>
-        s.id === sessionId ? { ...s, name: newName } : s
+        s.id === sessionId 
+          ? { ...s, name: trimmedName }
+          : s
+      ),
+    }));
+  };
+
+  const handleChangeModel = (sessionId: string, model: MistralModel) => {
+    setChatState(prev => ({
+      ...prev,
+      sessions: prev.sessions.map(s =>
+        s.id === sessionId ? { ...s, model } : s
       ),
     }));
   };
@@ -110,6 +161,7 @@ export function useChatState() {
     handleCreateSession,
     handleDeleteSession,
     handleRenameSession,
+    handleChangeModel,
     addMessage,
   };
 }

@@ -1,9 +1,11 @@
-# 🌟 AuraChat
+# <div align="center">🌟 AuraChat</div>
 
-<div align="center">
-  <img src="https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/sparkles.svg" alt="AuraChat Logo" width="120" height="120" style="filter: drop-shadow(0 0 0.75rem #00f3ff);">
+<div align="center" class="logo-container">
+  <div class="floating-logo">
+    <img src="https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/sparkles.svg" alt="AuraChat Logo" width="120" height="120">
+  </div>
 
-  <h3 align="center">Your Intelligent AI Code Assistant</h3>
+  <h3 class="gradient-text">Your Intelligent AI Code Assistant</h3>
 
   <p align="center">
     A beautiful, modern AI chat application with code execution capabilities and voice interaction
@@ -16,7 +18,7 @@
   </p>
 </div>
 
-<div align="center">
+<div align="center" class="badge-container">
 
 ![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
 ![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
@@ -25,21 +27,40 @@
 
 </div>
 
-## ✨ Features
-
-<div align="center">
-  <img src="https://images.unsplash.com/photo-1673187172822-2c7e80ccd8f4?q=80&w=2070" width="600" style="border-radius: 10px; margin: 20px 0;">
+<div class="showcase-container">
+  <div class="showcase-image">
+    <img src="https://images.unsplash.com/photo-1673187172822-2c7e80ccd8f4?q=80&w=2070" alt="AuraChat Interface" />
+  </div>
 </div>
 
-- 🤖 **Advanced AI Chat** - Powered by Mistral AI for intelligent code assistance
-- 💻 **Live Code Execution** - Run JavaScript code snippets directly in the chat
-- 🎯 **Multiple Chat Sessions** - Organize your conversations efficiently
-- 🎨 **Beautiful UI** - Modern, cyberpunk-inspired design with neon accents
-- 🗣️ **Voice Interaction** - Speak with your AI assistant naturally
-- 📝 **Markdown Support** - Rich text formatting with syntax highlighting
-- 🌓 **Code Editor** - Built-in Monaco editor for code editing
-- 💾 **Persistent Storage** - Your conversations are saved locally
-- 📱 **Responsive Design** - Works seamlessly on all devices
+## ✨ Features
+
+<div class="features-grid">
+  <div class="feature-card">
+    <h4>🤖 Advanced AI Chat</h4>
+    <p>Powered by Mistral AI for intelligent code assistance</p>
+  </div>
+  <div class="feature-card">
+    <h4>💻 Live Code Execution</h4>
+    <p>Run JavaScript code snippets directly in the chat</p>
+  </div>
+  <div class="feature-card">
+    <h4>🎯 Multiple Sessions</h4>
+    <p>Organize your conversations efficiently</p>
+  </div>
+  <div class="feature-card">
+    <h4>🎨 Beautiful UI</h4>
+    <p>Modern, cyberpunk-inspired design with neon accents</p>
+  </div>
+  <div class="feature-card">
+    <h4>🗣️ Voice Interaction</h4>
+    <p>Speak with your AI assistant naturally</p>
+  </div>
+  <div class="feature-card">
+    <h4>📝 Markdown Support</h4>
+    <p>Rich text formatting with syntax highlighting</p>
+  </div>
+</div>
 
 ## 🚀 Getting Started
 
@@ -51,30 +72,32 @@
 ### Installation
 
 1. Clone the repository:
-```bash
-git clone https://github.com/yourusername/aurachat.git
-cd aurachat
-```
+\`\`\`bash
+git clone https://github.com/tarunerror/AuraChat.git
+cd AuraChat
+\`\`\`
 
 2. Install dependencies:
-```bash
+\`\`\`bash
 npm install
-```
+\`\`\`
 
-3. Create a `.env` file in the root directory:
-```env
+3. Create a \`.env\` file in the root directory:
+\`\`\`env
 VITE_MISTRAL_API_KEY=your_api_key_here
-```
+\`\`\`
 
 4. Start the development server:
-```bash
+\`\`\`bash
 npm run dev
-```
+\`\`\`
 
 ## 🎮 Usage
 
-<div align="center">
-  <img src="https://images.unsplash.com/photo-1675557009875-436f7a7a5ba4?q=80&w=2070" width="600" style="border-radius: 10px; margin: 20px 0;">
+<div class="usage-container">
+  <div class="usage-image">
+    <img src="https://images.unsplash.com/photo-1675557009875-436f7a7a5ba4?q=80&w=2070" alt="AuraChat Demo" />
+  </div>
 </div>
 
 ### Chat Interface
@@ -87,7 +110,7 @@ npm run dev
 
 ### Code Execution
 
-```javascript
+\`\`\`javascript
 // Example: Calculate Fibonacci sequence
 function fibonacci(n) {
   if (n <= 1) return n;
@@ -95,23 +118,26 @@ function fibonacci(n) {
 }
 
 console.log(fibonacci(10));
-```
-
-### Voice Commands
-
-1. Click the microphone icon
-2. Speak your question or command
-3. The AI will respond with voice and text
+\`\`\`
 
 ## 🛠️ Technologies
 
-- **Frontend**: React, TypeScript, Tailwind CSS
-- **Build Tool**: Vite
-- **AI Integration**: Mistral AI
-- **Code Editor**: Monaco Editor
-- **Voice**: Web Speech API
-- **Icons**: Lucide React
-- **Styling**: Custom Cyberpunk Theme
+<div class="tech-grid">
+  <div class="tech-card">Frontend</div>
+  <div class="tech-card">React, TypeScript, Tailwind CSS</div>
+  <div class="tech-card">Build Tool</div>
+  <div class="tech-card">Vite</div>
+  <div class="tech-card">AI Integration</div>
+  <div class="tech-card">Mistral AI</div>
+  <div class="tech-card">Code Editor</div>
+  <div class="tech-card">Monaco Editor</div>
+  <div class="tech-card">Voice</div>
+  <div class="tech-card">Web Speech API</div>
+  <div class="tech-card">Icons</div>
+  <div class="tech-card">Lucide React</div>
+  <div class="tech-card">Styling</div>
+  <div class="tech-card">Custom Cyberpunk Theme</div>
+</div>
 
 ## 🤝 Contributing
 
@@ -121,39 +147,177 @@ Contributions are welcome! Feel free to:
 2. Create a feature branch
 3. Submit a pull request
 
+For major changes, please open an issue first to discuss what you would like to change.
+
 ## 📜 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🌟 Acknowledgments
-
-- Mistral AI for the powerful language model
-- The React community for amazing tools
-- All contributors and users of AuraChat
-
 ---
 
-<div align="center">
-  Made with ❤️ and ⚡ by the AuraChat Team
+<div align="center" class="footer">
+  <p>Made with ❤️ and ⚡ by <a href="https://github.com/tarunerror">Tarun</a></p>
+  
+  <a href="https://github.com/tarunerror/AuraChat">
+    <img src="https://img.shields.io/github/stars/tarunerror/AuraChat?style=social" alt="GitHub stars">
+  </a>
 </div>
 
 <style>
-  /* Add some animation to the README */
-  img[alt="AuraChat Logo"] {
-    animation: float 6s ease-in-out infinite;
+/* 3D and Animation Styles */
+.logo-container {
+  perspective: 1000px;
+  padding: 2rem;
+}
+
+.floating-logo {
+  animation: float 6s ease-in-out infinite;
+  transform-style: preserve-3d;
+}
+
+.floating-logo img {
+  filter: drop-shadow(0 0 15px rgba(0, 243, 255, 0.6));
+  transition: transform 0.3s ease;
+}
+
+.floating-logo:hover img {
+  transform: rotateY(180deg);
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotateY(0); }
+  50% { transform: translateY(-20px) rotateY(10deg); }
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, #00f3ff, #bc13fe);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-size: 2.5rem;
+  font-weight: bold;
+  text-shadow: 0 0 20px rgba(0, 243, 255, 0.3);
+  animation: glow 3s ease-in-out infinite;
+}
+
+@keyframes glow {
+  0%, 100% { filter: brightness(100%); }
+  50% { filter: brightness(150%); }
+}
+
+.badge-container {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin: 2rem 0;
+  perspective: 1000px;
+}
+
+.badge-container img {
+  transform-style: preserve-3d;
+  transition: transform 0.3s ease;
+}
+
+.badge-container img:hover {
+  transform: translateZ(20px);
+}
+
+.showcase-container {
+  position: relative;
+  margin: 4rem 0;
+  perspective: 2000px;
+}
+
+.showcase-image {
+  border-radius: 20px;
+  overflow: hidden;
+  transform: rotateX(5deg);
+  box-shadow: 0 20px 40px rgba(0, 243, 255, 0.2);
+  transition: transform 0.3s ease;
+}
+
+.showcase-image:hover {
+  transform: rotateX(0);
+}
+
+.showcase-image img {
+  width: 100%;
+  height: auto;
+  border-radius: 20px;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  margin: 3rem 0;
+}
+
+.feature-card {
+  background: rgba(26, 26, 58, 0.8);
+  border-radius: 15px;
+  padding: 2rem;
+  border: 1px solid rgba(0, 243, 255, 0.2);
+  transform-style: preserve-3d;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.feature-card:hover {
+  transform: translateZ(20px);
+  box-shadow: 0 10px 30px rgba(0, 243, 255, 0.3);
+}
+
+.tech-grid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1rem;
+  margin: 2rem 0;
+}
+
+.tech-card {
+  background: rgba(26, 26, 58, 0.8);
+  padding: 1rem;
+  border-radius: 10px;
+  border: 1px solid rgba(0, 243, 255, 0.2);
+  transition: transform 0.3s ease;
+}
+
+.tech-card:hover {
+  transform: scale(1.05);
+  background: rgba(0, 243, 255, 0.1);
+}
+
+.footer {
+  margin-top: 4rem;
+  padding: 2rem;
+  background: linear-gradient(to top, rgba(26, 26, 58, 0.8), transparent);
+  border-radius: 20px;
+  transform-style: preserve-3d;
+}
+
+.footer a {
+  color: #00f3ff;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.footer a:hover {
+  color: #bc13fe;
+  text-shadow: 0 0 10px rgba(0, 243, 255, 0.5);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .gradient-text {
+    font-size: 2rem;
   }
   
-  @keyframes float {
-    0% { transform: translateY(0px); }
-    50% { transform: translateY(-20px); }
-    100% { transform: translateY(0px); }
+  .features-grid {
+    grid-template-columns: 1fr;
   }
   
-  .shields img {
-    transition: transform 0.3s ease;
+  .tech-grid {
+    grid-template-columns: 1fr;
   }
-  
-  .shields img:hover {
-    transform: translateY(-5px);
-  }
+}
 </style>
