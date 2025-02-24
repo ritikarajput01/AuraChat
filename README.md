@@ -10,9 +10,9 @@
 
 ### Your Intelligent Coding Companion
 
-[Live Demo](https://aura-chat.netlify.app) • [Report Bug](https://github.com/tarunerror/AuraChat/issues) • [Request Feature]([https://github.com/tarunerror/AuraChat/issues](https://github.com/tarunerror/AuraChat/issues)
+[Live Demo](https://aura-chat.netlify.app) • [Report Bug](https://github.com/tarunerror/AuraChat/issues) • [Request Feature]([https://github.com/tarunerror/AuraChat/issues])(https://github.com/tarunerror/AuraChat/issues)
 
-![AuraChat Demo](https://images.unsplash.com/photo-1673187172822-2c7e80ccd8f4?q=80&w=2070)
+![AuraChat Demo](https://postimg.cc/SnjWnLjn)
 
 </div>
 
