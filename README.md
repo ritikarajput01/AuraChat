@@ -151,7 +151,7 @@ Give a ⭐️ if this project helped you!
 <div align="center">
   <p>Made with ❤️ by <a href="https://github.com/tarunerror">Tarun Gautam</a></p>
   
-  <a href="https://twitter.com/yourusername">
-    <img src="https://img.shields.io/instagram/follow/tan.error?style=social" alt="Instagram Follow">
-  </a>
+  <a href="https://instagram.com/tan.error">
+    <img src="https://img.shields.io/badge/Follow-%40tan.error-ff69b4?style=social&logo=instagram" alt="Instagram Follow">
+</a>
 </div>
