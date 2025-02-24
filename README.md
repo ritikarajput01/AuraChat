@@ -12,7 +12,7 @@
 
 [Live Demo](https://aura-chat.netlify.app) • [Report Bug](https://github.com/tarunerror/AuraChat/issues) • [Request Feature]([https://github.com/tarunerror/AuraChat/issues])(https://github.com/tarunerror/AuraChat/issues)
 
-[![AuraChat Demo](https://i.postimg.cc/3xF9bnTF/Screenshot-2025-02-24-013914.png)](https://postimg.cc/SnjWnLjn)
+[![AuraChat Demo](https://i.postimg.cc/ncv1C0Cf/Screenshot-2025-02-24-112701.png)](https://postimg.cc/7fZzR13K)
 
 </div>
 
