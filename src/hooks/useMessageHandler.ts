@@ -9,7 +9,7 @@ export function useMessageHandler(
   getCurrentSession: () => any,
   speakMessage: (text: string) => void
 ) {
-  const handleSendMessage = async (content: string, isVoice: boolean = false) => {
+  const handleSendMessage = async (content: string, isVoice: boolean = false, isRegeneration: boolean = false) => {
     if (!mistralClient.current) {
       setChatState(prev => ({
         ...prev,
@@ -18,20 +18,40 @@ export function useMessageHandler(
       return;
     }
 
-    const newMessage: Message = {
-      role: 'user',
-      content,
-      isVoice,
-      timestamp: Date.now(),
-    };
-    
-    addMessage(newMessage);
+    // Add the user message first if it's not a regeneration
+    if (!isRegeneration) {
+      const newMessage: Message = {
+        role: 'user',
+        content,
+        isVoice,
+        timestamp: Date.now(),
+      };
+      addMessage(newMessage);
+    }
+
     setChatState(prev => ({ ...prev, isLoading: true, error: null }));
 
     try {
       const currentSession = getCurrentSession();
-      const messages = [...currentSession.messages, newMessage];
       
+      // Prepare messages for the API call
+      let messages = [...currentSession.messages];
+      
+      // For regeneration, remove the last assistant message
+      if (isRegeneration && messages.length > 0 && messages[messages.length - 1].role === 'assistant') {
+        messages.pop();
+      }
+
+      // Ensure we have at least one message
+      if (messages.length === 0 && !isRegeneration) {
+        messages = [{
+          role: 'user',
+          content,
+          timestamp: Date.now(),
+        }];
+      }
+
+      // Make the API call with the prepared messages
       const response = await mistralClient.current.chat({
         model: currentSession.model,
         messages: messages.map(msg => ({
@@ -49,7 +69,21 @@ export function useMessageHandler(
         timestamp: Date.now(),
       };
 
-      addMessage(assistantMessage);
+      if (isRegeneration) {
+        setChatState(prev => ({
+          ...prev,
+          sessions: prev.sessions.map(s =>
+            s.id === currentSession.id
+              ? {
+                  ...s,
+                  messages: [...messages, assistantMessage],
+                }
+              : s
+          ),
+        }));
+      } else {
+        addMessage(assistantMessage);
+      }
 
       if (isVoice) {
         setTimeout(() => {

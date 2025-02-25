@@ -4,13 +4,9 @@ import { ChatState, ChatSession, Message, MistralModel } from '../types';
 const STORAGE_KEY = 'ai-chat-state';
 
 const generateSessionName = (message: string): string => {
-  // Remove code blocks
   const cleanMessage = message.replace(/```[\s\S]*?```/g, '');
-  
-  // Get first line or first X characters
   const firstLine = cleanMessage.split('\n')[0].trim();
   const name = firstLine.slice(0, 40) + (firstLine.length > 40 ? '...' : '');
-  
   return name || 'New Chat';
 };
 
@@ -85,7 +81,6 @@ export function useChatState() {
     setChatState(prev => {
       const newSessions = prev.sessions.filter(s => s.id !== sessionId);
       
-      // If we deleted all sessions, create a new one
       if (newSessions.length === 0) {
         const newSession: ChatSession = {
           id: Math.random().toString(36).substr(2, 9),
@@ -101,7 +96,6 @@ export function useChatState() {
         };
       }
 
-      // If we deleted the current session, switch to the last remaining session
       const newCurrentId = prev.currentSessionId === sessionId
         ? newSessions[newSessions.length - 1].id
         : prev.currentSessionId;
@@ -141,8 +135,35 @@ export function useChatState() {
     updateCurrentSession(session => {
       const updatedSession = {
         ...session,
-        messages: [...session.messages, message],
+        messages: [...session.messages],
       };
+
+      if (message.role === 'assistant') {
+        // Find the last user message and its corresponding regeneration history
+        const lastUserMessageIndex = updatedSession.messages.map(m => m.role).lastIndexOf('user');
+        
+        if (lastUserMessageIndex !== -1) {
+          const regenerationHistory = updatedSession.regenerationHistory || [];
+          const existingHistory = regenerationHistory.find(h => h.messageIndex === lastUserMessageIndex);
+
+          if (existingHistory) {
+            // Add to existing history
+            existingHistory.responses.push(message);
+            message.regenerationIndex = existingHistory.responses.length - 1;
+          } else {
+            // Create new history entry
+            regenerationHistory.push({
+              messageIndex: lastUserMessageIndex,
+              responses: [message],
+            });
+            message.regenerationIndex = 0;
+          }
+
+          updatedSession.regenerationHistory = regenerationHistory;
+        }
+      }
+
+      updatedSession.messages.push(message);
 
       // Update session name if this is the first user message
       if (message.role === 'user' && session.messages.length === 0) {
@@ -150,6 +171,36 @@ export function useChatState() {
       }
 
       return updatedSession;
+    });
+  };
+
+  const navigateResponse = (direction: 'prev' | 'next') => {
+    updateCurrentSession(session => {
+      const messages = [...session.messages];
+      const lastAssistantIndex = messages.map(m => m.role).lastIndexOf('assistant');
+      
+      if (lastAssistantIndex === -1) return session;
+
+      const lastUserMessageIndex = messages.slice(0, lastAssistantIndex).map(m => m.role).lastIndexOf('user');
+      if (lastUserMessageIndex === -1) return session;
+
+      const history = session.regenerationHistory?.find(h => h.messageIndex === lastUserMessageIndex);
+      if (!history) return session;
+
+      const currentIndex = messages[lastAssistantIndex].regenerationIndex || 0;
+      const newIndex = direction === 'prev' ? currentIndex - 1 : currentIndex + 1;
+
+      if (newIndex < 0 || newIndex >= history.responses.length) return session;
+
+      messages[lastAssistantIndex] = {
+        ...history.responses[newIndex],
+        regenerationIndex: newIndex,
+      };
+
+      return {
+        ...session,
+        messages,
+      };
     });
   };
 
@@ -163,5 +214,6 @@ export function useChatState() {
     handleRenameSession,
     handleChangeModel,
     addMessage,
+    navigateResponse,
   };
 }

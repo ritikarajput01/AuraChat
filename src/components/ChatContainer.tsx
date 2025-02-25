@@ -11,6 +11,11 @@ interface ChatContainerProps {
   onExecuteCode: (blockId: string, code: string) => void;
   onRegenerate?: () => void;
   onSpeak?: (text: string) => void;
+  onNavigateResponse?: (direction: 'prev' | 'next') => void;
+  regenerationHistory?: {
+    messageIndex: number;
+    responses: Message[];
+  }[];
 }
 
 export const ChatContainer: React.FC<ChatContainerProps> = ({
@@ -21,6 +26,8 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({
   onExecuteCode,
   onRegenerate,
   onSpeak,
+  onNavigateResponse,
+  regenerationHistory,
 }) => {
   const lastAssistantMessageIndex = [...messages].reverse().findIndex(m => m.role === 'assistant');
   const lastAssistantMessage = lastAssistantMessageIndex !== -1 
@@ -56,17 +63,33 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({
           )}
           
           <div className="space-y-3 md:space-y-4">
-            {messages.map((message, index) => (
-              <ChatMessage 
-                key={index} 
-                message={message}
-                isSpeaking={isSpeaking && index === messages.length - 1}
-                onExecuteCode={onExecuteCode}
-                onRegenerate={index === lastAssistantMessage ? onRegenerate : undefined}
-                isLastAssistantMessage={index === lastAssistantMessage}
-                onSpeak={onSpeak}
-              />
-            ))}
+            {messages.map((message, index) => {
+              let regenerationInfo;
+              if (message.role === 'assistant' && regenerationHistory) {
+                const prevUserIndex = messages.slice(0, index).map(m => m.role).lastIndexOf('user');
+                const history = regenerationHistory.find(h => h.messageIndex === prevUserIndex);
+                if (history) {
+                  regenerationInfo = {
+                    currentIndex: message.regenerationIndex || 0,
+                    totalVersions: history.responses.length,
+                  };
+                }
+              }
+
+              return (
+                <ChatMessage 
+                  key={index} 
+                  message={message}
+                  isSpeaking={isSpeaking && index === messages.length - 1}
+                  onExecuteCode={onExecuteCode}
+                  onRegenerate={index === lastAssistantMessage ? onRegenerate : undefined}
+                  onNavigateResponse={index === lastAssistantMessage ? onNavigateResponse : undefined}
+                  isLastAssistantMessage={index === lastAssistantMessage}
+                  onSpeak={onSpeak}
+                  regenerationInfo={regenerationInfo}
+                />
+              );
+            })}
           </div>
           
           {isLoading && (

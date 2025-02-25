@@ -27,10 +27,11 @@ interface LayoutProps {
   onCloseSettings: () => void;
   setIsMobileMenuOpen: (open: boolean) => void;
   onExecuteCode: (blockId: string, code: string) => void;
-  onSendMessage: (message: string, isVoice?: boolean) => void;
+  onSendMessage: (message: string, isVoice?: boolean, isRegeneration?: boolean) => void;
   onUploadDocument: (file: File) => void;
   onChangeModel: (sessionId: string, model: MistralModel) => void;
   onSpeak: (text: string) => void;
+  onNavigateResponse: (direction: 'prev' | 'next') => void;
 }
 
 export const Layout: React.FC<LayoutProps> = ({
@@ -57,6 +58,7 @@ export const Layout: React.FC<LayoutProps> = ({
   onUploadDocument,
   onChangeModel,
   onSpeak,
+  onNavigateResponse,
 }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
@@ -66,7 +68,7 @@ export const Layout: React.FC<LayoutProps> = ({
       .find(message => message.role === 'user');
     
     if (lastUserMessage) {
-      onSendMessage(lastUserMessage.content, lastUserMessage.isVoice);
+      onSendMessage(lastUserMessage.content, lastUserMessage.isVoice, true);
     }
   };
 
@@ -103,7 +105,6 @@ export const Layout: React.FC<LayoutProps> = ({
           onCreateSession={onCreateSession}
           onDeleteSession={onDeleteSession}
           onRenameSession={onRenameSession}
-          onChangeModel={onChangeModel}
         />
       </div>
 
@@ -134,6 +135,8 @@ export const Layout: React.FC<LayoutProps> = ({
                   onExecuteCode={onExecuteCode}
                   onRegenerate={handleRegenerate}
                   onSpeak={onSpeak}
+                  onNavigateResponse={onNavigateResponse}
+                  regenerationHistory={currentSession.regenerationHistory}
                 />
               </div>
 

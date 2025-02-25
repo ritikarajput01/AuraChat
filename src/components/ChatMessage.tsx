@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { Message } from '../types';
-import { Bot, User, Volume2, RefreshCw, Volume } from 'lucide-react';
+import { Bot, User, Volume2, RotateCcw, Volume, Copy, Check, ChevronLeft, ChevronRight } from 'lucide-react';
 import { CodeBlock } from './CodeBlock';
 
 interface ChatMessageProps {
@@ -9,8 +9,13 @@ interface ChatMessageProps {
   isSpeaking?: boolean;
   onExecuteCode: (blockId: string, code: string) => void;
   onRegenerate?: () => void;
+  onNavigateResponse?: (direction: 'prev' | 'next') => void;
   isLastAssistantMessage?: boolean;
   onSpeak?: (text: string) => void;
+  regenerationInfo?: {
+    currentIndex: number;
+    totalVersions: number;
+  };
 }
 
 export const ChatMessage: React.FC<ChatMessageProps> = ({ 
@@ -18,23 +23,65 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
   isSpeaking,
   onExecuteCode,
   onRegenerate,
+  onNavigateResponse,
   isLastAssistantMessage,
   onSpeak,
+  regenerationInfo,
 }) => {
   const isBot = message.role === 'assistant';
+  const [copied, setCopied] = useState(false);
+  const [isRegenerating, setIsRegenerating] = useState(false);
+  const regenerationTimeoutRef = useRef<number>();
+
+  useEffect(() => {
+    if (isRegenerating && message.content !== "Regenerating...") {
+      setIsRegenerating(false);
+      if (regenerationTimeoutRef.current) {
+        clearTimeout(regenerationTimeoutRef.current);
+      }
+    }
+  }, [message.content, isRegenerating]);
+
+  useEffect(() => {
+    return () => {
+      if (regenerationTimeoutRef.current) {
+        clearTimeout(regenerationTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const handleSpeak = () => {
     if (onSpeak && isBot) {
-      // Clean up the text for better speech
       const cleanText = message.content
-        .replace(/```[\s\S]*?```/g, '') // Remove code blocks
-        .replace(/\[.*?\]/g, '') // Remove markdown links
-        .replace(/[*_~`]/g, '') // Remove markdown formatting
-        .replace(/\n\n/g, '. ') // Replace double newlines with period and space
-        .replace(/\n/g, ' ') // Replace single newlines with space
+        .replace(/```[\s\S]*?```/g, '')
+        .replace(/\[.*?\]/g, '')
+        .replace(/[*_~`]/g, '')
+        .replace(/\n\n/g, '. ')
+        .replace(/\n/g, ' ')
         .trim();
       
       onSpeak(cleanText);
+    }
+  };
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(message.content);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy text:', err);
+    }
+  };
+
+  const handleRegenerate = () => {
+    if (onRegenerate && !isRegenerating) {
+      setIsRegenerating(true);
+      onRegenerate();
+      
+      regenerationTimeoutRef.current = window.setTimeout(() => {
+        setIsRegenerating(false);
+      }, 10000);
     }
   };
 
@@ -71,6 +118,11 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
                 <Volume className="w-3.5 h-3.5 md:w-4 md:h-4" />
               )}
             </button>
+          )}
+          {regenerationInfo && regenerationInfo.totalVersions > 1 && (
+            <span className="text-sm text-[#00f3ff]/60">
+              Version {regenerationInfo.currentIndex + 1} of {regenerationInfo.totalVersions}
+            </span>
           )}
           {isSpeaking && (
             <div className="flex gap-1 items-center">
@@ -129,15 +181,62 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
           >
             {message.content}
           </ReactMarkdown>
-          {isBot && isLastAssistantMessage && onRegenerate && (
-            <div className="mt-4 flex justify-end">
-              <button
-                onClick={onRegenerate}
-                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-[#00f3ff] bg-[#00f3ff]/10 hover:bg-[#00f3ff]/20 rounded-lg transition-colors cyber-border"
-              >
-                <RefreshCw className="w-4 h-4" />
-                Regenerate response
-              </button>
+          {isBot && isLastAssistantMessage && (
+            <div className="mt-4 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                {regenerationInfo && regenerationInfo.totalVersions > 1 && (
+                  <div className="flex items-center gap-1">
+                    <button
+                      onClick={() => onNavigateResponse?.('prev')}
+                      disabled={regenerationInfo.currentIndex === 0}
+                      className={`p-2 text-sm font-medium text-[#00f3ff] bg-[#00f3ff]/10 hover:bg-[#00f3ff]/20 rounded-lg transition-colors cyber-border ${
+                        regenerationInfo.currentIndex === 0 ? 'opacity-50 cursor-not-allowed' : ''
+                      }`}
+                      title="Previous version"
+                    >
+                      <ChevronLeft className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => onNavigateResponse?.('next')}
+                      disabled={regenerationInfo.currentIndex === regenerationInfo.totalVersions - 1}
+                      className={`p-2 text-sm font-medium text-[#00f3ff] bg-[#00f3ff]/10 hover:bg-[#00f3ff]/20 rounded-lg transition-colors cyber-border ${
+                        regenerationInfo.currentIndex === regenerationInfo.totalVersions - 1 ? 'opacity-50 cursor-not-allowed' : ''
+                      }`}
+                      title="Next version"
+                    >
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                  </div>
+                )}
+                {isRegenerating && (
+                  <span className="text-sm text-[#00f3ff]/60">
+                    Regenerating...
+                  </span>
+                )}
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={handleCopy}
+                  className="p-2 text-sm font-medium text-[#00f3ff] bg-[#00f3ff]/10 hover:bg-[#00f3ff]/20 rounded-lg transition-colors cyber-border"
+                  title="Copy message"
+                >
+                  {copied ? (
+                    <Check className="w-4 h-4" />
+                  ) : (
+                    <Copy className="w-4 h-4" />
+                  )}
+                </button>
+                <button
+                  onClick={handleRegenerate}
+                  disabled={isRegenerating}
+                  className={`p-2 text-sm font-medium text-[#00f3ff] bg-[#00f3ff]/10 hover:bg-[#00f3ff]/20 rounded-lg transition-colors cyber-border ${
+                    isRegenerating ? 'opacity-50 cursor-not-allowed' : ''
+                  }`}
+                  title="Regenerate response"
+                >
+                  <RotateCcw className={`w-4 h-4 ${isRegenerating ? 'animate-spin' : ''}`} />
+                </button>
+              </div>
             </div>
           )}
         </div>

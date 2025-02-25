@@ -18,6 +18,7 @@ function App() {
     handleRenameSession,
     handleChangeModel,
     addMessage,
+    navigateResponse,
   } = useChatState();
 
   const [showSettings, setShowSettings] = useState(false);
@@ -42,7 +43,6 @@ function App() {
       
       const text = await parseDocument(file);
       
-      // Create a message with the file content
       const fileType = file.type.startsWith('image/') ? 'image' : 'document';
       const message = `I've uploaded ${fileType === 'image' ? 'an image' : 'a document'} named "${file.name}". Please analyze its contents:\n\n${text}`;
       
@@ -58,7 +58,6 @@ function App() {
     }
   };
 
-  // Initialize voice when the app loads
   useEffect(() => {
     initializeVoice();
   }, [initializeVoice]);
@@ -97,6 +96,7 @@ function App() {
       onUploadDocument={handleUploadDocument}
       onChangeModel={handleChangeModel}
       onSpeak={handleSpeak}
+      onNavigateResponse={navigateResponse}
       isProcessingFile={isProcessingFile}
     />
   );
