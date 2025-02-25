@@ -28,7 +28,7 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({
   return (
     <div className="flex-1 flex flex-col h-full overflow-hidden">
       <div className="flex-1 overflow-y-auto rounded-lg md:rounded-2xl bg-[#1a1a3a]/90 backdrop-blur-xl border border-[#00f3ff]/20 shadow-lg shadow-[#00f3ff]/5">
-        <div className="min-h-full p-3 md:p-6 space-y-3 md:space-y-4">
+        <div className="min-h-full p-3 md:p-6 space-y-3 md:space-y-4 max-w-none">
           {messages.length === 0 && (
             <div className="empty-state">
               <div className="empty-state-icon">

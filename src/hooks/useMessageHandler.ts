@@ -51,9 +51,7 @@ export function useMessageHandler(
 
       addMessage(assistantMessage);
 
-      // Always speak the response if the input was voice
       if (isVoice) {
-        // Small delay to ensure smooth transition
         setTimeout(() => {
           speakMessage(text);
         }, 100);

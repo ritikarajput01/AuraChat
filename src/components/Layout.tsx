@@ -106,43 +106,45 @@ export const Layout: React.FC<LayoutProps> = ({
       </div>
 
       <div className="flex-1 flex flex-col h-screen overflow-hidden">
-        <div className="container mx-auto px-3 md:px-6 flex flex-col h-full max-w-5xl pt-16 md:pt-4 pb-3 md:pb-4">
-          <Header
-            sessionsCount={sessions.length}
-            onToggleSessions={() => {}}
-            onToggleSettings={onToggleSettings}
-          />
-
-          {showSettings && (
-            <VoiceSettings
-              voiceConfig={voiceConfig}
-              setVoiceConfig={setVoiceConfig}
-              onClose={onCloseSettings}
+        <div className="flex-1 flex flex-col h-full max-w-none w-full">
+          <div className="container mx-auto px-3 md:px-6 flex flex-col h-full max-w-none pt-16 md:pt-4 pb-3 md:pb-4">
+            <Header
+              sessionsCount={sessions.length}
+              onToggleSessions={() => {}}
+              onToggleSettings={onToggleSettings}
             />
-          )}
 
-          <div className="flex-1 flex flex-col overflow-hidden min-h-0 mt-3 md:mt-4">
-            <div className="flex-1 min-h-0">
-              <ChatContainer
-                messages={currentSession.messages}
-                isLoading={isLoading}
-                error={error}
-                isSpeaking={isSpeaking}
-                onExecuteCode={onExecuteCode}
-                onRegenerate={handleRegenerate}
+            {showSettings && (
+              <VoiceSettings
+                voiceConfig={voiceConfig}
+                setVoiceConfig={setVoiceConfig}
+                onClose={onCloseSettings}
               />
-            </div>
+            )}
 
-            <div className="mt-3 md:mt-4">
-              <ChatInput
-                onSend={onSendMessage}
-                onUploadDocument={onUploadDocument}
-                disabled={isLoading}
-                isSpeaking={isSpeaking}
-                currentModel={currentSession.model}
-                onChangeModel={(model) => onChangeModel(currentSession.id, model)}
-                isProcessingFile={isProcessingFile}
-              />
+            <div className="flex-1 flex flex-col overflow-hidden min-h-0 mt-3 md:mt-4">
+              <div className="flex-1 min-h-0">
+                <ChatContainer
+                  messages={currentSession.messages}
+                  isLoading={isLoading}
+                  error={error}
+                  isSpeaking={isSpeaking}
+                  onExecuteCode={onExecuteCode}
+                  onRegenerate={handleRegenerate}
+                />
+              </div>
+
+              <div className="mt-3 md:mt-4">
+                <ChatInput
+                  onSend={onSendMessage}
+                  onUploadDocument={onUploadDocument}
+                  disabled={isLoading}
+                  isSpeaking={isSpeaking}
+                  currentModel={currentSession.model}
+                  onChangeModel={(model) => onChangeModel(currentSession.id, model)}
+                  isProcessingFile={isProcessingFile}
+                />
+              </div>
             </div>
           </div>
         </div>

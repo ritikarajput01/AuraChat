@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Mic, Send, Square, Plus, Loader2 } from 'lucide-react';
+import { Mic, Send, Square, Plus, Loader2, X } from 'lucide-react';
 import { MistralModel, MISTRAL_MODELS } from '../types';
 
 interface ChatInputProps {
@@ -22,6 +22,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   isProcessingFile = false,
 }) => {
   const [message, setMessage] = useState('');
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isListening, setIsListening] = useState(false);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const [isRecognitionSupported, setIsRecognitionSupported] = useState(false);
@@ -34,8 +35,14 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   }, []);
 
   const handleSend = (isVoice: boolean = false) => {
-    if (message.trim()) {
-      onSend(message, isVoice);
+    if (message.trim() || selectedFile) {
+      if (selectedFile) {
+        onUploadDocument(selectedFile);
+        setSelectedFile(null);
+      }
+      if (message.trim()) {
+        onSend(message, isVoice);
+      }
       setMessage('');
       if (textareaRef.current) {
         textareaRef.current.style.height = 'auto';
@@ -46,11 +53,15 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      onUploadDocument(file);
+      setSelectedFile(file);
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
       }
     }
+  };
+
+  const handleRemoveFile = () => {
+    setSelectedFile(null);
   };
 
   const adjustTextareaHeight = () => {
@@ -110,19 +121,36 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   };
 
   return (
-    <div className="p-2 md:p-4 glass-panel rounded-lg md:rounded-xl">
+    <div className="p-2 md:p-4 glass-panel rounded-lg md:rounded-xl bg-[#1a1a3a]/95 shadow-[0_0_30px_rgba(0,243,255,0.2)]">
       <div className="flex flex-col gap-2 md:gap-3">
         <select
           value={currentModel}
           onChange={(e) => onChangeModel(e.target.value as MistralModel)}
-          className="w-full md:w-40 px-3 py-2 md:py-2.5 rounded-lg bg-[#0a0a1f] border border-[#00f3ff]/30 text-[#00f3ff] text-sm focus:outline-none focus:ring-2 focus:ring-[#00f3ff]/50"
+          className="w-full md:w-40 px-3 py-2 md:py-2.5 rounded-lg bg-[#2a2a4a] border-2 border-[#00f3ff]/60 text-[#00f3ff] text-sm md:text-base font-medium focus:outline-none focus:ring-2 focus:ring-[#00f3ff]/50 focus:border-[#00f3ff] transition-all hover:border-[#00f3ff]/80"
         >
           {MISTRAL_MODELS.map(model => (
-            <option key={model} value={model}>
+            <option key={model} value={model} className="bg-[#2a2a4a] text-[#00f3ff]">
               {model}
             </option>
           ))}
         </select>
+
+        {selectedFile && (
+          <div className="flex items-center gap-2 p-2 rounded-lg bg-[#3a3a5a] border-2 border-[#00f3ff]/40">
+            <div className="flex-1 truncate text-[#00f3ff]">
+              <span className="text-sm font-medium">{selectedFile.name}</span>
+              <span className="text-xs text-[#00f3ff]/70 ml-2">
+                ({(selectedFile.size / 1024).toFixed(1)} KB)
+              </span>
+            </div>
+            <button
+              onClick={handleRemoveFile}
+              className="p-1 hover:bg-[#4a4a6a] rounded-lg transition-colors text-[#00f3ff]/70 hover:text-[#00f3ff]"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        )}
 
         <div className="flex gap-2 md:gap-3">
           <div className="relative flex-1">
@@ -135,7 +163,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
             />
             <button
               onClick={() => fileInputRef.current?.click()}
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-[#00f3ff]/70 hover:text-[#00f3ff] transition-colors"
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-[#00f3ff] hover:text-white transition-colors"
               title="Upload document or image"
               disabled={isProcessingFile}
             >
@@ -150,8 +178,13 @@ export const ChatInput: React.FC<ChatInputProps> = ({
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder={isRecognitionSupported ? "Type or speak your message..." : "Type your message..."}
-              className="w-full pl-10 pr-3 py-2 md:py-3 rounded-lg chat-input text-sm md:text-base min-h-[40px] max-h-[120px] resize-none"
+              placeholder={selectedFile 
+                ? "Add a message about your file (optional)..." 
+                : isRecognitionSupported 
+                  ? "Type or speak your message..." 
+                  : "Type your message..."
+              }
+              className="w-full pl-10 pr-3 py-2.5 md:py-3 rounded-lg bg-[#2a2a4a] border-2 border-[#00f3ff]/60 text-white placeholder-[#00f3ff]/80 text-sm md:text-base min-h-[44px] md:min-h-[48px] max-h-[120px] resize-none focus:outline-none focus:ring-2 focus:ring-[#00f3ff]/50 focus:border-[#00f3ff] transition-all shadow-[0_0_20px_rgba(0,243,255,0.1)] hover:border-[#00f3ff]/80"
               disabled={disabled || isListening}
               rows={1}
             />
@@ -160,30 +193,30 @@ export const ChatInput: React.FC<ChatInputProps> = ({
           {isRecognitionSupported && (
             <button
               onClick={toggleSpeechRecognition}
-              className={`p-2 md:p-3 rounded-lg transition-all cyber-border ${
+              className={`p-2.5 md:p-3 rounded-lg transition-all ${
                 isListening 
-                  ? 'bg-red-500/20 border-red-500/50 text-red-400 neon-glow animate-pulse' 
-                  : 'bg-[#1a1a3a]/50 border-[#00f3ff]/30 text-[#00f3ff] hover:bg-[#1a1a3a]'
+                  ? 'bg-red-500/40 border-2 border-red-500/80 text-red-400 neon-glow animate-pulse' 
+                  : 'bg-[#2a2a4a] border-2 border-[#00f3ff]/60 text-[#00f3ff] hover:bg-[#3a3a5a] hover:border-[#00f3ff] hover:text-white shadow-[0_0_20px_rgba(0,243,255,0.1)]'
               }`}
               type="button"
               disabled={disabled || isSpeaking}
               title={isListening ? "Stop listening" : "Start voice input"}
             >
-              {isListening ? <Square className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
+              {isListening ? <Square className="w-4 h-4 md:w-5 md:h-5" /> : <Mic className="w-4 h-4 md:w-5 md:h-5" />}
             </button>
           )}
           <button
             onClick={() => handleSend()}
-            disabled={disabled || !message.trim()}
-            className="p-2 md:p-3 rounded-lg bg-[#00f3ff]/10 text-[#00f3ff] border border-[#00f3ff]/30 hover:bg-[#00f3ff]/20 transition-all disabled:opacity-50 disabled:hover:bg-[#00f3ff]/10 cyber-border"
+            disabled={disabled || (!message.trim() && !selectedFile)}
+            className="p-2.5 md:p-3 rounded-lg bg-[#00f3ff]/30 text-[#00f3ff] border-2 border-[#00f3ff]/60 hover:bg-[#00f3ff]/40 hover:border-[#00f3ff] hover:text-white transition-all disabled:opacity-50 disabled:hover:bg-[#00f3ff]/30 shadow-[0_0_20px_rgba(0,243,255,0.1)]"
             type="button"
           >
-            <Send className="w-4 h-4" />
+            <Send className="w-4 h-4 md:w-5 md:h-5" />
           </button>
         </div>
       </div>
       {(isSpeaking || isListening) && (
-        <div className="mt-2 text-xs text-[#00f3ff]/60 flex items-center gap-2">
+        <div className="mt-2 text-xs md:text-sm text-[#00f3ff] flex items-center gap-2 font-medium">
           <div className="w-1.5 h-1.5 bg-[#00f3ff] rounded-full animate-soft-pulse"></div>
           <span>{isListening ? "Listening..." : "AI is speaking..."}</span>
         </div>

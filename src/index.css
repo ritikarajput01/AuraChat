@@ -149,16 +149,37 @@
 }
 
 .cyber-border {
-  @apply relative border border-[#00f3ff]/30 transition-all;
+  @apply relative border-2 border-[#00f3ff]/40 transition-all;
 }
 
 .cyber-border:hover {
-  @apply border-[#00f3ff]/60;
+  @apply border-[#00f3ff]/80;
 }
 
 /* Glass effect */
 .glass-panel {
-  @apply bg-[#0a0a1f]/95 backdrop-blur-xl border border-[#00f3ff]/20 shadow-lg shadow-[#00f3ff]/10;
+  @apply bg-[#2a2a4a]/95 backdrop-blur-xl border-2 border-[#00f3ff]/40 shadow-lg shadow-[#00f3ff]/20;
+}
+
+/* Enhanced input section */
+.chat-input {
+  @apply bg-[#2a2a4a] border-2 border-[#00f3ff]/60 transition-all text-white shadow-[0_0_30px_rgba(0,243,255,0.2)];
+}
+
+.chat-input::placeholder {
+  @apply text-[#00f3ff]/80;
+}
+
+.chat-input:focus {
+  @apply border-[#00f3ff] ring-2 ring-[#00f3ff]/40 bg-[#3a3a5a] shadow-[0_0_40px_rgba(0,243,255,0.3)];
+}
+
+.message-bubble {
+  @apply bg-[#2a2a4a]/95 border-2 border-[#00f3ff]/40 backdrop-blur-lg shadow-lg shadow-[#00f3ff]/20;
+}
+
+.message-bubble.assistant {
+  @apply bg-[#00f3ff]/20 border-2 border-[#00f3ff]/50;
 }
 
 /* Animations */
@@ -178,27 +199,6 @@
 
 .animate-float {
   animation: float 6s ease-in-out infinite;
-}
-
-/* Chat components */
-.chat-input {
-  @apply bg-[#0a0a1f]/95 border border-[#00f3ff]/40 transition-all text-white;
-}
-
-.chat-input::placeholder {
-  @apply text-[#00f3ff]/50;
-}
-
-.chat-input:focus {
-  @apply border-[#00f3ff]/80 shadow-[0_0_0_3px_rgba(0,243,255,0.2)] bg-[#1a1a3a]/95;
-}
-
-.message-bubble {
-  @apply bg-[#0a0a1f]/95 border border-[#00f3ff]/20 backdrop-blur-lg shadow-lg shadow-[#00f3ff]/10;
-}
-
-.message-bubble.assistant {
-  @apply bg-[#00f3ff]/10 border-[#00f3ff]/30;
 }
 
 /* Mobile optimizations */
