@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import { Message } from '../types';
-import { Bot, User, Volume2, RefreshCw } from 'lucide-react';
+import { Bot, User, Volume2, RefreshCw, Volume } from 'lucide-react';
 import { CodeBlock } from './CodeBlock';
 
 interface ChatMessageProps {
@@ -10,6 +10,7 @@ interface ChatMessageProps {
   onExecuteCode: (blockId: string, code: string) => void;
   onRegenerate?: () => void;
   isLastAssistantMessage?: boolean;
+  onSpeak?: (text: string) => void;
 }
 
 export const ChatMessage: React.FC<ChatMessageProps> = ({ 
@@ -18,8 +19,24 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
   onExecuteCode,
   onRegenerate,
   isLastAssistantMessage,
+  onSpeak,
 }) => {
   const isBot = message.role === 'assistant';
+
+  const handleSpeak = () => {
+    if (onSpeak && isBot) {
+      // Clean up the text for better speech
+      const cleanText = message.content
+        .replace(/```[\s\S]*?```/g, '') // Remove code blocks
+        .replace(/\[.*?\]/g, '') // Remove markdown links
+        .replace(/[*_~`]/g, '') // Remove markdown formatting
+        .replace(/\n\n/g, '. ') // Replace double newlines with period and space
+        .replace(/\n/g, ' ') // Replace single newlines with space
+        .trim();
+      
+      onSpeak(cleanText);
+    }
+  };
 
   return (
     <div className={`flex gap-3 md:gap-6 p-3 md:p-6 rounded-xl md:rounded-2xl transition-all message-bubble ${
@@ -37,6 +54,23 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
           </span>
           {message.isVoice && (
             <Volume2 className={`w-3.5 h-3.5 md:w-4 md:h-4 ${isBot ? 'text-[#00f3ff]/60' : 'text-[#bc13fe]/60'}`} />
+          )}
+          {isBot && (
+            <button
+              onClick={handleSpeak}
+              className={`p-1.5 rounded-lg transition-colors ${
+                isSpeaking 
+                  ? 'bg-[#00f3ff]/20 text-[#00f3ff]' 
+                  : 'hover:bg-[#00f3ff]/10 text-[#00f3ff]/60 hover:text-[#00f3ff]'
+              }`}
+              title={isSpeaking ? "Stop speaking" : "Listen to response"}
+            >
+              {isSpeaking ? (
+                <Volume2 className="w-3.5 h-3.5 md:w-4 md:h-4 animate-pulse" />
+              ) : (
+                <Volume className="w-3.5 h-3.5 md:w-4 md:h-4" />
+              )}
+            </button>
           )}
           {isSpeaking && (
             <div className="flex gap-1 items-center">

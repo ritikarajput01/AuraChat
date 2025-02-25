@@ -24,7 +24,7 @@ function App() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProcessingFile, setIsProcessingFile] = useState(false);
 
-  const { voiceConfig, setVoiceConfig, initializeVoice, speakMessage } = useVoice(setChatState);
+  const { voiceConfig, setVoiceConfig, initializeVoice, speakMessage, stopSpeaking } = useVoice(setChatState);
   const mistralClient = useMistralClient();
   const { handleSendMessage } = useMessageHandler(
     mistralClient,
@@ -65,6 +65,14 @@ function App() {
 
   const currentSession = getCurrentSession();
 
+  const handleSpeak = (text: string) => {
+    if (chatState.isSpeaking) {
+      stopSpeaking();
+    } else {
+      speakMessage(text);
+    }
+  };
+
   return (
     <Layout
       sessions={chatState.sessions}
@@ -88,6 +96,7 @@ function App() {
       onSendMessage={handleSendMessage}
       onUploadDocument={handleUploadDocument}
       onChangeModel={handleChangeModel}
+      onSpeak={handleSpeak}
       isProcessingFile={isProcessingFile}
     />
   );

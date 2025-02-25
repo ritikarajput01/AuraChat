@@ -30,6 +30,7 @@ interface LayoutProps {
   onSendMessage: (message: string, isVoice?: boolean) => void;
   onUploadDocument: (file: File) => void;
   onChangeModel: (sessionId: string, model: MistralModel) => void;
+  onSpeak: (text: string) => void;
 }
 
 export const Layout: React.FC<LayoutProps> = ({
@@ -55,6 +56,7 @@ export const Layout: React.FC<LayoutProps> = ({
   onSendMessage,
   onUploadDocument,
   onChangeModel,
+  onSpeak,
 }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
@@ -131,6 +133,7 @@ export const Layout: React.FC<LayoutProps> = ({
                   isSpeaking={isSpeaking}
                   onExecuteCode={onExecuteCode}
                   onRegenerate={handleRegenerate}
+                  onSpeak={onSpeak}
                 />
               </div>
 

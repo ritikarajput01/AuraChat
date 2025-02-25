@@ -10,6 +10,7 @@ interface ChatContainerProps {
   isSpeaking: boolean;
   onExecuteCode: (blockId: string, code: string) => void;
   onRegenerate?: () => void;
+  onSpeak?: (text: string) => void;
 }
 
 export const ChatContainer: React.FC<ChatContainerProps> = ({
@@ -19,6 +20,7 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({
   isSpeaking,
   onExecuteCode,
   onRegenerate,
+  onSpeak,
 }) => {
   const lastAssistantMessageIndex = [...messages].reverse().findIndex(m => m.role === 'assistant');
   const lastAssistantMessage = lastAssistantMessageIndex !== -1 
@@ -62,6 +64,7 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({
                 onExecuteCode={onExecuteCode}
                 onRegenerate={index === lastAssistantMessage ? onRegenerate : undefined}
                 isLastAssistantMessage={index === lastAssistantMessage}
+                onSpeak={onSpeak}
               />
             ))}
           </div>

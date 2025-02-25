@@ -37,14 +37,31 @@ export function useVoice(setChatState: (updater: (prev: any) => any) => void) {
 
     return () => {
       synth.onvoiceschanged = null;
+      // Cancel any ongoing speech when component unmounts
+      synth.cancel();
+      setChatState(prev => ({ ...prev, isSpeaking: false }));
     };
-  }, []);
+  }, [setChatState]);
+
+  const stopSpeaking = useCallback(() => {
+    const synth = window.speechSynthesis;
+    if (synth.speaking) {
+      // Pause first to prevent potential race conditions
+      synth.pause();
+      // Then cancel
+      synth.cancel();
+      setChatState(prev => ({ ...prev, isSpeaking: false }));
+    }
+  }, [setChatState]);
 
   const speakMessage = useCallback((text: string) => {
     const synth = window.speechSynthesis;
 
-    // Cancel any ongoing speech
-    synth.cancel();
+    // If already speaking, stop it
+    if (synth.speaking) {
+      stopSpeaking();
+      return;
+    }
 
     // Clean up the text for better speech
     const cleanText = text
@@ -75,13 +92,16 @@ export function useVoice(setChatState: (updater: (prev: any) => any) => void) {
     };
 
     utterance.onerror = (event) => {
-      console.error('Speech synthesis error:', event);
+      // Only log errors that aren't from intentional interruption
+      if (event.error !== 'interrupted') {
+        console.error('Speech synthesis error:', event);
+      }
       setChatState(prev => ({ ...prev, isSpeaking: false }));
     };
 
     // Start speaking
     synth.speak(utterance);
-  }, [voiceConfig, setChatState]);
+  }, [voiceConfig, setChatState, stopSpeaking]);
 
   const initializeVoice = useCallback(() => {
     // This is now handled by the useEffect hook
@@ -92,5 +112,6 @@ export function useVoice(setChatState: (updater: (prev: any) => any) => void) {
     setVoiceConfig,
     initializeVoice,
     speakMessage,
+    stopSpeaking,
   };
 }

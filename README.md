@@ -1,47 +1,58 @@
-<div align="center">
-  
-# 🌟 AuraChat
+# 🌟 AuraChat - Your Intelligent Coding Companion
 
 [![Made with React](https://img.shields.io/badge/React-18-blue?logo=react&logoColor=white)](https://reactjs.org)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Powered by Mistral AI](https://img.shields.io/badge/AI-Mistral-purple?logo=openai&logoColor=white)](https://mistral.ai)
+[![TailwindCSS](https://img.shields.io/badge/Tailwind-3.4-blue?logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
+[![Vite](https://img.shields.io/badge/Vite-5.0-blue?logo=vite&logoColor=white)](https://vitejs.dev)
 
-<img src="https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/sparkles.svg" alt="AuraChat Logo" width="120" height="120">
+<div align="center">
+  <img src="https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/sparkles.svg" alt="AuraChat Logo" width="120" height="120">
 
-### Your Intelligent Coding Companion
+  ### Your Intelligent Coding Companion
 
-[Live Demo](https://aurachat.netlify.app) • [Report Bug](https://github.com/tarunerror/AuraChat/issues) • [Request Feature]([https://github.com/tarunerror/AuraChat/issues])(https://github.com/tarunerror/AuraChat/issues)
+  [Live Demo](https://aurachat.netlify.app) • [Report Bug](https://github.com/tarunerror/AuraChat/issues) • [Request Feature](https://github.com/tarunerror/AuraChat/issues)
 
-[![AuraChat Demo](https://i.postimg.cc/ncv1C0Cf/Screenshot-2025-02-24-112701.png)](https://postimg.cc/7fZzR13K)
-
+  ![AuraChat Demo](https://i.postimg.cc/ncv1C0Cf/Screenshot-2025-02-24-112701.png)
 </div>
 
 ## ✨ Features
 
-- 🤖 **Advanced AI Coding Assistant**
-  - Get expert help with any programming language
-  - Receive detailed explanations and best practices
-  - Learn from AI-generated examples
+### 🤖 Advanced AI Integration
+- Powered by Mistral AI for intelligent responses
+- Multiple model options (tiny, small, medium)
+- Context-aware conversations
+- Code generation and explanation
 
-- 🎯 **Live Code Execution**
-  - Run JavaScript code directly in chat
-  - See results instantly
-  - Debug with real-time feedback
+### 💻 Code Execution
+- Live JavaScript code execution
+- Syntax highlighting for multiple languages
+- Interactive code editor with Monaco
+- Real-time output display
 
-- 🗣️ **Voice Interaction**
-  - Natural conversations with AI
-  - Hands-free coding assistance
-  - Multi-language voice support
+### 🎙️ Voice Interaction
+- Text-to-speech for AI responses
+- Customizable voice settings
+- Speech rate and pitch control
+- Toggle speech on/off
 
-- 🎨 **Cyberpunk Design**
-  - Stunning neon aesthetics
-  - Responsive glass morphism UI
-  - Smooth animations
+### 📱 Responsive Design
+- Mobile-first approach
+- Adaptive layout for all screen sizes
+- Touch-optimized interface
+- Safe area support for modern devices
 
-- 📱 **Cross-Platform**
-  - Perfect experience on all devices
-  - Optimized for desktop and mobile
-  - Progressive Web App support
+### 🎨 Modern UI/UX
+- Cyberpunk-inspired design
+- Glass morphism effects
+- Smooth animations
+- Dark mode optimized
+
+### 📄 Document Processing
+- Text file support
+- Image OCR capabilities
+- PDF text extraction
+- Multi-format compatibility
 
 ## 🚀 Quick Start
 
@@ -58,93 +69,125 @@ npm install
 # Add your Mistral AI API key
 echo "VITE_MISTRAL_API_KEY=your_key_here" > .env
 
-# Start coding!
+# Start the development server
 npm run dev
 ```
 
 ## 💡 Usage Examples
 
-### Ask Coding Questions
-```javascript
-// Ask anything like:
-"How do I implement a binary search tree in JavaScript?"
-"What's the best way to handle authentication in React?"
-"Can you explain async/await with examples?"
+### Chat Interface
+```typescript
+// Start a new chat
+const chat = await aurachat.createSession({
+  model: 'mistral-tiny',
+  name: 'New Chat'
+});
+
+// Send a message
+await chat.sendMessage('How do I implement a binary search tree in TypeScript?');
 ```
 
-### Run Code Directly
+### Code Execution
 ```javascript
-// Execute code in chat:
+// Execute code directly in chat
 function fibonacci(n) {
   return n <= 1 ? n : fibonacci(n-1) + fibonacci(n-2);
 }
 
-// See results instantly!
 console.log(fibonacci(10)); // Output: 55
 ```
 
 ### Voice Commands
-```javascript
-// Just say:
-"Write a function to sort an array of objects by date"
-"Explain how React hooks work"
-"Show me an example of Redux implementation"
+```typescript
+// Configure voice settings
+chat.setVoiceConfig({
+  rate: 1.0,
+  pitch: 1.0,
+  volume: 1.0
+});
+
+// Toggle speech
+chat.toggleSpeech();
 ```
 
-## 🛠️ Tech Stack
+## 🛠️ Technical Stack
 
-- ⚛️ **Frontend**
-  - React 18 with TypeScript
-  - Tailwind CSS for styling
-  - Vite for blazing fast builds
+### Frontend
+- React 18.3
+- TypeScript 5.5
+- Tailwind CSS 3.4
+- Vite 5.4
 
-- 🤖 **AI Integration**
-  - Mistral AI API
-  - WebSpeech API for voice
-  - Real-time code execution
+### AI Integration
+- Mistral AI API
+- WebSpeech API
+- Tesseract.js for OCR
 
-- 🎨 **UI/UX**
-  - Cyberpunk-inspired design
-  - Glass morphism effects
-  - Responsive animations
+### Development
+- ESLint 9.9
+- Monaco Editor
+- Lucide Icons
 
 ## 📱 Cross-Platform Support
 
-AuraChat works seamlessly across all platforms:
+AuraChat is thoroughly tested and optimized for:
 
-- 💻 **Desktop**
-  - Windows
-  - macOS
-  - Linux
+### Desktop
+- Windows 10/11
+- macOS 10.15+
+- Linux (modern distributions)
 
-- 📱 **Mobile**
-  - iOS
-  - Android
-  - Tablets
+### Mobile
+- iOS 13+
+- Android 9+
+- PWA support
 
-- 🌐 **Browsers**
-  - Chrome
-  - Firefox
-  - Safari
-  - Edge
+### Browsers
+- Chrome 90+
+- Firefox 90+
+- Safari 14+
+- Edge 90+
+
+## 🔧 Configuration
+
+### Environment Variables
+```env
+VITE_MISTRAL_API_KEY=your_api_key_here
+```
+
+### Voice Settings
+```typescript
+{
+  voice: null | SpeechSynthesisVoice,
+  pitch: number, // 0.5 to 2
+  rate: number,  // 0.5 to 2
+  volume: number // 0 to 1
+}
+```
 
 ## 🤝 Contributing
 
-We love contributions! Here's how you can help:
+We welcome contributions! Here's how you can help:
 
 1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add AmazingFeature'`)
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-## 📜 License
+### Development Guidelines
+- Follow TypeScript best practices
+- Maintain responsive design principles
+- Write unit tests for new features
+- Update documentation as needed
+
+## 📄 License
 
 Distributed under the MIT License. See `LICENSE` for more information.
 
 ## 🌟 Show Your Support
 
-Give a ⭐️ if this project helped you!
+If you find AuraChat helpful, please give it a star! ⭐️
 
 ---
 
@@ -153,5 +196,5 @@ Give a ⭐️ if this project helped you!
   
   <a href="https://instagram.com/tan.error">
     <img src="https://img.shields.io/badge/Follow-%40tan.error-ff69b4?style=social&logo=instagram" alt="Instagram Follow">
-</a>
+  </a>
 </div>
