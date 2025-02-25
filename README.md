@@ -10,9 +10,9 @@
 
 ### Your Intelligent Coding Companion
 
-[Live Demo](https://aurachat.netlify.app) • [Report Bug](https://github.com/yourusername/aurachat/issues) • [Request Feature](https://github.com/yourusername/aurachat/issues)
+[Live Demo](https://aurachat.netlify.app) • [Report Bug](https://github.com/tarunerror/AuraChat/issues) • [Request Feature]([https://github.com/tarunerror/AuraChat/issues])(https://github.com/tarunerror/AuraChat/issues)
 
-![AuraChat Demo](https://images.unsplash.com/photo-1673187172822-2c7e80ccd8f4?q=80&w=2070)
+[![AuraChat Demo](https://i.postimg.cc/ncv1C0Cf/Screenshot-2025-02-24-112701.png)](https://postimg.cc/7fZzR13K)
 
 </div>
 
@@ -47,7 +47,7 @@
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/aurachat
+git clone https://github.com/tarunerror/AuraChat
 
 # Navigate to project directory
 cd aurachat
@@ -149,9 +149,9 @@ Give a ⭐️ if this project helped you!
 ---
 
 <div align="center">
-  <p>Made with ❤️ by <a href="https://github.com/yourusername">Your Name</a></p>
+  <p>Made with ❤️ by <a href="https://github.com/tarunerror">Tarun Gautam</a></p>
   
-  <a href="https://twitter.com/yourusername">
-    <img src="https://img.shields.io/twitter/follow/yourusername?style=social" alt="Twitter Follow">
-  </a>
+  <a href="https://instagram.com/tan.error">
+    <img src="https://img.shields.io/badge/Follow-%40tan.error-ff69b4?style=social&logo=instagram" alt="Instagram Follow">
+</a>
 </div>
