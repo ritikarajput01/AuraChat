@@ -22,6 +22,7 @@ interface MainContentProps {
   onChangeModel: (model: MistralModel) => void;
   onSpeak: (text: string) => void;
   onRegenerate: () => void;
+  onNavigateResponse?: (direction: 'prev' | 'next') => void;
 }
 
 export const MainContent: React.FC<MainContentProps> = ({
@@ -41,6 +42,7 @@ export const MainContent: React.FC<MainContentProps> = ({
   onChangeModel,
   onSpeak,
   onRegenerate,
+  onNavigateResponse
 }) => {
   return (
     <div className="flex-1 flex flex-col h-screen overflow-hidden">
@@ -66,27 +68,7 @@ export const MainContent: React.FC<MainContentProps> = ({
                 messages={currentSession.messages}
                 isLoading={isLoading}
                 error={error}
-                isSpeaking={isSpeaking}
-                onExecuteCode={onExecuteCode}
-                onRegenerate={onRegenerate}
-                onSpeak={onSpeak}
-              />
-            </div>
-
-            <div className="mt-3 md:mt-4">
-              <ChatInput
-                onSend={onSendMessage}
-                onUploadDocument={onUploadDocument}
-                disabled={isLoading}
-                isSpeaking={isSpeaking}
-                currentModel={currentSession.model}
-                onChangeModel={onChangeModel}
-                isProcessingFile={isProcessingFile}
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
+                isSpeaking={isSpe
+                }
+  )
+}

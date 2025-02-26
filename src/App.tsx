@@ -72,6 +72,10 @@ function App() {
     }
   };
 
+  const handleNavigateResponseWrapper = (direction: 'prev' | 'next') => {
+    navigateResponse(direction);
+  };
+
   return (
     <Layout
       sessions={chatState.sessions}
@@ -96,7 +100,7 @@ function App() {
       onUploadDocument={handleUploadDocument}
       onChangeModel={handleChangeModel}
       onSpeak={handleSpeak}
-      onNavigateResponse={navigateResponse}
+      onNavigateResponse={handleNavigateResponseWrapper}
       isProcessingFile={isProcessingFile}
     />
   );

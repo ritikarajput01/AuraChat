@@ -1,6 +1,6 @@
-import React from 'react';
-import { VoiceConfig } from '../types';
-import { X } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { VoiceConfig, SUPPORTED_LANGUAGES } from '../types';
+import { X, Globe } from 'lucide-react';
 
 interface VoiceSettingsProps {
   voiceConfig: VoiceConfig;
@@ -13,7 +13,36 @@ export const VoiceSettings: React.FC<VoiceSettingsProps> = ({
   setVoiceConfig,
   onClose,
 }) => {
-  const voices = window.speechSynthesis.getVoices();
+  const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
+  const [filteredVoices, setFilteredVoices] = useState<SpeechSynthesisVoice[]>([]);
+  const [selectedLanguage, setSelectedLanguage] = useState<string>('all');
+
+  useEffect(() => {
+    const loadVoices = () => {
+      const availableVoices = window.speechSynthesis.getVoices();
+      setVoices(availableVoices);
+      setFilteredVoices(availableVoices);
+    };
+
+    loadVoices();
+    window.speechSynthesis.onvoiceschanged = loadVoices;
+
+    return () => {
+      window.speechSynthesis.onvoiceschanged = null;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (selectedLanguage === 'all') {
+      setFilteredVoices(voices);
+    } else {
+      setFilteredVoices(voices.filter(voice => voice.lang.startsWith(selectedLanguage)));
+    }
+  }, [selectedLanguage, voices]);
+
+  const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedLanguage(e.target.value);
+  };
 
   return (
     <div className="border-b border-[#00f3ff]/10 glass-panel p-6">
@@ -28,6 +57,25 @@ export const VoiceSettings: React.FC<VoiceSettingsProps> = ({
       </div>
       <div className="space-y-6">
         <div>
+          <label className="block text-sm font-medium text-[#00f3ff]/70 mb-2 flex items-center gap-2">
+            <Globe className="w-4 h-4" />
+            Filter Voices by Language
+          </label>
+          <select
+            value={selectedLanguage}
+            onChange={handleLanguageChange}
+            className="w-full p-3 rounded-lg bg-[#0a0a1f] border border-[#00f3ff]/30 text-[#00f3ff] focus:outline-none focus:ring-2 focus:ring-[#00f3ff]/50"
+          >
+            <option value="all">All Languages</option>
+            {SUPPORTED_LANGUAGES.map(lang => (
+              <option key={lang.code} value={lang.code}>
+                {lang.name} ({lang.nativeName})
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div>
           <label className="block text-sm font-medium text-[#00f3ff]/70 mb-2">
             Voice
           </label>
@@ -39,14 +87,14 @@ export const VoiceSettings: React.FC<VoiceSettingsProps> = ({
             }}
             className="w-full p-3 rounded-lg bg-[#0a0a1f] border border-[#00f3ff]/30 text-[#00f3ff] focus:outline-none focus:ring-2 focus:ring-[#00f3ff]/50"
           >
-            {voices.map(voice => (
+            {filteredVoices.map(voice => (
               <option key={voice.name} value={voice.name}>
                 {voice.name} ({voice.lang})
               </option>
             ))}
           </select>
         </div>
-        <div className="grid grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div>
             <label className="block text-sm font-medium text-[#00f3ff]/70 mb-2">
               Pitch ({voiceConfig.pitch})

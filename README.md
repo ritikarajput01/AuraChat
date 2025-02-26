@@ -1,10 +1,10 @@
 # 🌟 AuraChat - Your Intelligent Coding Companion
 
-[![Made with React](https://img.shields.io/badge/React-18-blue?logo=react&logoColor=white)](https://reactjs.org)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Made with React](https://img.shields.io/badge/React-18.3-blue?logo=react&logoColor=white)](https://reactjs.org)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.5-blue?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Powered by Mistral AI](https://img.shields.io/badge/AI-Mistral-purple?logo=openai&logoColor=white)](https://mistral.ai)
 [![TailwindCSS](https://img.shields.io/badge/Tailwind-3.4-blue?logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
-[![Vite](https://img.shields.io/badge/Vite-5.0-blue?logo=vite&logoColor=white)](https://vitejs.dev)
+[![Vite](https://img.shields.io/badge/Vite-5.4-blue?logo=vite&logoColor=white)](https://vitejs.dev)
 
 <div align="center">
   <img src="https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/sparkles.svg" alt="AuraChat Logo" width="120" height="120">
@@ -20,8 +20,8 @@
 
 ### 🤖 Advanced AI Integration
 - Powered by Mistral AI for intelligent responses
-- Multiple model options (tiny, small, medium)
-- Context-aware conversations
+- 15+ model options (tiny to large, specialized models)
+- Context-aware conversations with alternatives
 - Code generation and explanation
 
 ### 💻 Code Execution
@@ -33,8 +33,14 @@
 ### 🎙️ Voice Interaction
 - Text-to-speech for AI responses
 - Customizable voice settings
-- Speech rate and pitch control
+- Speech recognition for voice input
 - Toggle speech on/off
+
+### 🌐 Multilingual Support
+- Automatic language detection
+- Responses in the user's language
+- Support for 25+ languages
+- Native language display
 
 ### 📱 Responsive Design
 - Mobile-first approach
@@ -79,7 +85,7 @@ npm run dev
 ```typescript
 // Start a new chat
 const chat = await aurachat.createSession({
-  model: 'mistral-tiny',
+  model: 'mistral-small',
   name: 'New Chat'
 });
 
@@ -164,6 +170,20 @@ VITE_MISTRAL_API_KEY=your_api_key_here
   volume: number // 0 to 1
 }
 ```
+
+## 🧠 AI Models
+
+AuraChat supports multiple Mistral AI models:
+
+### General Purpose
+- Mistral Small/Large/Saba
+- Mixtral 8x7B/8x22B
+- Ministral 3B/8B
+
+### Specialized
+- Codestral (code-focused)
+- Mathstral (math-focused)
+- Pixtral (image-focused)
 
 ## 🤝 Contributing
 

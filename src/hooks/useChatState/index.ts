@@ -23,7 +23,7 @@ export function useChatState() {
       name: 'New Chat',
       createdAt: Date.now(),
       messages: [],
-      model: 'mistral-tiny',
+      model: 'mistral-small', // Updated default model
     };
     return {
       sessions: [initialSession],
@@ -55,7 +55,7 @@ export function useChatState() {
     }));
   };
 
-  const handleCreateSession = (name: string = 'New Chat', model: MistralModel = 'mistral-tiny') => {
+  const handleCreateSession = (name: string = 'New Chat', model: MistralModel = 'mistral-small') => {
     const newSession: ChatSession = {
       id: Math.random().toString(36).substr(2, 9),
       name,
@@ -81,7 +81,7 @@ export function useChatState() {
           name: 'New Chat',
           createdAt: Date.now(),
           messages: [],
-          model: 'mistral-tiny',
+          model: 'mistral-small', // Updated default model
         };
         return {
           ...prev,
@@ -141,9 +141,54 @@ export function useChatState() {
     });
   };
 
-  const navigateResponse = () => {
-    // This function would be implemented for response navigation
-    console.log('Navigate response');
+  const navigateResponse = (direction: 'prev' | 'next') => {
+    updateCurrentSession(session => {
+      const updatedMessages = [...session.messages];
+      const lastAssistantMessageIndex = updatedMessages.findIndex(
+        (msg, idx) => msg.role === 'assistant' && 
+        (idx === updatedMessages.length - 1 || updatedMessages[idx + 1]?.role === 'user')
+      );
+      
+      if (lastAssistantMessageIndex === -1) return session;
+      
+      const lastAssistantMessage = updatedMessages[lastAssistantMessageIndex];
+      
+      if (!lastAssistantMessage.alternatives || lastAssistantMessage.alternatives.length === 0) {
+        return session;
+      }
+      
+      const currentIndex = lastAssistantMessage.currentAlternativeIndex || 0;
+      const totalAlternatives = lastAssistantMessage.alternatives.length;
+      
+      let newIndex;
+      if (direction === 'next') {
+        newIndex = (currentIndex + 1) % (totalAlternatives + 1);
+      } else {
+        newIndex = (currentIndex - 1 + totalAlternatives + 1) % (totalAlternatives + 1);
+      }
+      
+      // Update the message content based on the new index
+      if (newIndex === 0) {
+        // Show original response
+        updatedMessages[lastAssistantMessageIndex] = {
+          ...lastAssistantMessage,
+          content: lastAssistantMessage.originalContent || lastAssistantMessage.content,
+          currentAlternativeIndex: 0
+        };
+      } else {
+        // Show alternative response
+        updatedMessages[lastAssistantMessageIndex] = {
+          ...lastAssistantMessage,
+          content: lastAssistantMessage.alternatives[newIndex - 1],
+          currentAlternativeIndex: newIndex
+        };
+      }
+      
+      return {
+        ...session,
+        messages: updatedMessages
+      };
+    });
   };
 
   return {

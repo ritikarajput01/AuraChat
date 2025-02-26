@@ -12,6 +12,7 @@ interface ChatMessageProps {
   onRegenerate?: () => void;
   isLastAssistantMessage?: boolean;
   onSpeak?: (text: string) => void;
+  onNavigate?: (direction: 'prev' | 'next') => void;
 }
 
 export const ChatMessage: React.FC<ChatMessageProps> = ({ 
@@ -21,6 +22,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
   onRegenerate,
   isLastAssistantMessage,
   onSpeak,
+  onNavigate
 }) => {
   const isBot = message.role === 'assistant';
   const [isRegenerating, setIsRegenerating] = useState(false);
@@ -68,6 +70,20 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
     }
   };
 
+  const handleNavigate = (direction: 'prev' | 'next') => {
+    if (onNavigate) {
+      onNavigate(direction);
+    }
+  };
+
+  // Calculate if this message has alternatives and how many
+  const hasAlternatives = isBot && 
+                         message.alternatives && 
+                         message.alternatives.length > 0;
+  
+  const totalAlternatives = message.alternatives?.length || 0;
+  const currentIndex = message.currentAlternativeIndex || 0;
+
   return (
     <div className={`flex gap-3 md:gap-6 p-3 md:p-6 rounded-xl md:rounded-2xl transition-all message-bubble ${
       isBot ? 'assistant' : ''
@@ -83,6 +99,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
           isVoice={message.isVoice} 
           isSpeaking={isSpeaking}
           onSpeak={isBot ? handleSpeak : undefined}
+          language={message.language}
         />
         
         <MessageContent 
@@ -96,6 +113,10 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
             content={message.content}
             onRegenerate={handleRegenerate}
             isRegenerating={isRegenerating}
+            onNavigate={handleNavigate}
+            hasAlternatives={hasAlternatives}
+            currentAlternativeIndex={currentIndex}
+            totalAlternatives={totalAlternatives}
           />
         )}
       </div>

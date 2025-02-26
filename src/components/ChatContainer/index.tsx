@@ -13,6 +13,7 @@ interface ChatContainerProps {
   onExecuteCode: (blockId: string, code: string) => void;
   onRegenerate?: () => void;
   onSpeak?: (text: string) => void;
+  onNavigateResponse?: (direction: 'prev' | 'next') => void;
 }
 
 export const ChatContainer: React.FC<ChatContainerProps> = ({
@@ -23,6 +24,7 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({
   onExecuteCode,
   onRegenerate,
   onSpeak,
+  onNavigateResponse
 }) => {
   const lastAssistantMessageIndex = [...messages].reverse().findIndex(m => m.role === 'assistant');
   const lastAssistantMessage = lastAssistantMessageIndex !== -1 
@@ -45,6 +47,7 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({
                 onRegenerate={index === lastAssistantMessage ? onRegenerate : undefined}
                 isLastAssistantMessage={index === lastAssistantMessage}
                 onSpeak={onSpeak}
+                onNavigate={index === lastAssistantMessage ? onNavigateResponse : undefined}
               />
             ))}
           </div>

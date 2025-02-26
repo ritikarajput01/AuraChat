@@ -27,7 +27,7 @@ interface LayoutProps {
   onUploadDocument: (file: File) => void;
   onChangeModel: (sessionId: string, model: MistralModel) => void;
   onSpeak: (text: string) => void;
-  onNavigateResponse: () => void;
+  onNavigateResponse: (direction: 'prev' | 'next') => void;
 }
 
 export const Layout: React.FC<LayoutProps> = ({
@@ -54,6 +54,7 @@ export const Layout: React.FC<LayoutProps> = ({
   onUploadDocument,
   onChangeModel,
   onSpeak,
+  onNavigateResponse
 }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
@@ -102,6 +103,7 @@ export const Layout: React.FC<LayoutProps> = ({
         onChangeModel={(model) => onChangeModel(currentSession.id, model)}
         onSpeak={onSpeak}
         onRegenerate={handleRegenerate}
+        onNavigateResponse={onNavigateResponse}
       />
     </div>
   );

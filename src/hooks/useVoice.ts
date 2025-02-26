@@ -54,7 +54,7 @@ export function useVoice(setChatState: (updater: (prev: any) => any) => void) {
     }
   }, [setChatState]);
 
-  const speakMessage = useCallback((text: string) => {
+  const speakMessage = useCallback((text: string, language?: string) => {
     const synth = window.speechSynthesis;
 
     // If already speaking, stop it
@@ -74,10 +74,19 @@ export function useVoice(setChatState: (updater: (prev: any) => any) => void) {
 
     const utterance = new SpeechSynthesisUtterance(cleanText);
     
-    // Apply voice configuration
-    if (voiceConfig.voice) {
+    // Try to find a voice that matches the language
+    if (language) {
+      const voices = synth.getVoices();
+      const matchingVoice = voices.find(voice => voice.lang.startsWith(language));
+      if (matchingVoice) {
+        utterance.voice = matchingVoice;
+      } else if (voiceConfig.voice) {
+        utterance.voice = voiceConfig.voice;
+      }
+    } else if (voiceConfig.voice) {
       utterance.voice = voiceConfig.voice;
     }
+    
     utterance.pitch = voiceConfig.pitch;
     utterance.rate = voiceConfig.rate;
     utterance.volume = voiceConfig.volume;

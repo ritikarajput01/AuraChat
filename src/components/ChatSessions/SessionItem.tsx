@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { MessageSquare, Edit2, Trash2, Check, X } from 'lucide-react';
+import { MessageSquare, Edit2, Trash2, Check, X, Globe } from 'lucide-react';
 import { ChatSession } from '../../types';
+import { getLanguageName } from '../../utils/languageUtils';
 
 interface SessionItemProps {
   session: ChatSession;
@@ -110,6 +111,13 @@ export const SessionItem: React.FC<SessionItemProps> = ({
           </div>
         )}
       </div>
+      
+      {session.language && !isEditing && (
+        <div className="mt-2 flex items-center gap-1 text-xs text-[#00f3ff]/60">
+          <Globe size={12} />
+          <span>{getLanguageName(session.language)}</span>
+        </div>
+      )}
     </div>
   );
 };
