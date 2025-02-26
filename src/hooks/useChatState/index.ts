@@ -1,14 +1,8 @@
 import { useState, useEffect } from 'react';
-import { ChatState, ChatSession, Message, MistralModel } from '../types';
+import { ChatState, ChatSession, Message, MistralModel } from '../../types';
+import { generateSessionName } from './generateSessionName';
 
 const STORAGE_KEY = 'ai-chat-state';
-
-const generateSessionName = (message: string): string => {
-  const cleanMessage = message.replace(/```[\s\S]*?```/g, '');
-  const firstLine = cleanMessage.split('\n')[0].trim();
-  const name = firstLine.slice(0, 40) + (firstLine.length > 40 ? '...' : '');
-  return name || 'New Chat';
-};
 
 export function useChatState() {
   const [chatState, setChatState] = useState<ChatState>(() => {
@@ -147,6 +141,11 @@ export function useChatState() {
     });
   };
 
+  const navigateResponse = () => {
+    // This function would be implemented for response navigation
+    console.log('Navigate response');
+  };
+
   return {
     chatState,
     setChatState,
@@ -157,5 +156,6 @@ export function useChatState() {
     handleRenameSession,
     handleChangeModel,
     addMessage,
+    navigateResponse,
   };
 }

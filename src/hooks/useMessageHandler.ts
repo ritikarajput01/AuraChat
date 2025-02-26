@@ -34,30 +34,45 @@ export function useMessageHandler(
     try {
       const currentSession = getCurrentSession();
       
-      // Prepare messages for the API call
-      let messages = [...currentSession.messages];
+      // Prepare messages for the API call - only include messages up to the last user message
+      let apiMessages = [];
+      const sessionMessages = [...currentSession.messages];
       
-      // For regeneration, remove the last assistant message
-      if (isRegeneration && messages.length > 0 && messages[messages.length - 1].role === 'assistant') {
-        messages.pop();
+      // For regeneration, remove the last assistant message if it exists
+      if (isRegeneration && sessionMessages.length > 0 && sessionMessages[sessionMessages.length - 1].role === 'assistant') {
+        sessionMessages.pop();
       }
-
-      // Ensure we have at least one message
-      if (messages.length === 0 && !isRegeneration) {
-        messages = [{
+      
+      // Format messages for the API - ensure we end with a user message
+      for (let i = 0; i < sessionMessages.length; i++) {
+        apiMessages.push({
+          role: sessionMessages[i].role,
+          content: sessionMessages[i].content
+        });
+      }
+      
+      // If we're not regenerating and there are no messages, add the current message
+      if (apiMessages.length === 0 && !isRegeneration) {
+        apiMessages.push({
           role: 'user',
-          content,
-          timestamp: Date.now(),
-        }];
+          content
+        });
+      }
+      
+      // Ensure the last message is from the user
+      if (apiMessages.length > 0 && apiMessages[apiMessages.length - 1].role !== 'user') {
+        // If the last message isn't from a user, we need to fix this
+        // For simplicity, we'll just add a system message at the end
+        apiMessages.push({
+          role: 'user',
+          content: 'Please continue.'
+        });
       }
 
       // Make the API call with the prepared messages
       const response = await mistralClient.current.chat({
         model: currentSession.model,
-        messages: messages.map(msg => ({
-          role: msg.role,
-          content: msg.content,
-        })),
+        messages: apiMessages,
       });
 
       const { text, blocks } = extractCodeBlocks(response.choices[0].message.content);
@@ -76,7 +91,7 @@ export function useMessageHandler(
             s.id === currentSession.id
               ? {
                   ...s,
-                  messages: [...messages, assistantMessage],
+                  messages: [...sessionMessages, assistantMessage],
                 }
               : s
           ),

@@ -4,7 +4,6 @@ export interface Message {
   isVoice?: boolean;
   codeBlocks?: CodeBlock[];
   timestamp: number;
-  regenerationIndex?: number; // Track regeneration version
 }
 
 export interface CodeBlock {
@@ -22,10 +21,6 @@ export interface ChatSession {
   createdAt: number;
   messages: Message[];
   model: MistralModel;
-  regenerationHistory?: { // Store regeneration history
-    messageIndex: number;
-    responses: Message[];
-  }[];
 }
 
 export interface ChatState {

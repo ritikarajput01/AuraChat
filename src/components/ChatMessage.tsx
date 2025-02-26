@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { Message } from '../types';
-import { Bot, User, Volume2, RotateCcw, Volume, Copy, Check, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Bot, User, Volume2, RotateCcw, Volume, Copy, Check } from 'lucide-react';
 import { CodeBlock } from './CodeBlock';
 
 interface ChatMessageProps {
@@ -9,13 +9,8 @@ interface ChatMessageProps {
   isSpeaking?: boolean;
   onExecuteCode: (blockId: string, code: string) => void;
   onRegenerate?: () => void;
-  onNavigateResponse?: (direction: 'prev' | 'next') => void;
   isLastAssistantMessage?: boolean;
   onSpeak?: (text: string) => void;
-  regenerationInfo?: {
-    currentIndex: number;
-    totalVersions: number;
-  };
 }
 
 export const ChatMessage: React.FC<ChatMessageProps> = ({ 
@@ -23,10 +18,8 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
   isSpeaking,
   onExecuteCode,
   onRegenerate,
-  onNavigateResponse,
   isLastAssistantMessage,
   onSpeak,
-  regenerationInfo,
 }) => {
   const isBot = message.role === 'assistant';
   const [copied, setCopied] = useState(false);
@@ -119,11 +112,6 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
               )}
             </button>
           )}
-          {regenerationInfo && regenerationInfo.totalVersions > 1 && (
-            <span className="text-sm text-[#00f3ff]/60">
-              Version {regenerationInfo.currentIndex + 1} of {regenerationInfo.totalVersions}
-            </span>
-          )}
           {isSpeaking && (
             <div className="flex gap-1 items-center">
               <div className="w-1 h-1 md:w-1.5 md:h-1.5 bg-[#00f3ff] rounded-full animate-soft-pulse"></div>
@@ -182,39 +170,13 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
             {message.content}
           </ReactMarkdown>
           {isBot && isLastAssistantMessage && (
-            <div className="mt-4 flex items-center justify-between">
+            <div className="mt-4 flex items-center justify-end">
               <div className="flex items-center gap-2">
-                {regenerationInfo && regenerationInfo.totalVersions > 1 && (
-                  <div className="flex items-center gap-1">
-                    <button
-                      onClick={() => onNavigateResponse?.('prev')}
-                      disabled={regenerationInfo.currentIndex === 0}
-                      className={`p-2 text-sm font-medium text-[#00f3ff] bg-[#00f3ff]/10 hover:bg-[#00f3ff]/20 rounded-lg transition-colors cyber-border ${
-                        regenerationInfo.currentIndex === 0 ? 'opacity-50 cursor-not-allowed' : ''
-                      }`}
-                      title="Previous version"
-                    >
-                      <ChevronLeft className="w-4 h-4" />
-                    </button>
-                    <button
-                      onClick={() => onNavigateResponse?.('next')}
-                      disabled={regenerationInfo.currentIndex === regenerationInfo.totalVersions - 1}
-                      className={`p-2 text-sm font-medium text-[#00f3ff] bg-[#00f3ff]/10 hover:bg-[#00f3ff]/20 rounded-lg transition-colors cyber-border ${
-                        regenerationInfo.currentIndex === regenerationInfo.totalVersions - 1 ? 'opacity-50 cursor-not-allowed' : ''
-                      }`}
-                      title="Next version"
-                    >
-                      <ChevronRight className="w-4 h-4" />
-                    </button>
-                  </div>
-                )}
                 {isRegenerating && (
-                  <span className="text-sm text-[#00f3ff]/60">
+                  <span className="text-sm text-[#00f3ff]/60 mr-2">
                     Regenerating...
                   </span>
                 )}
-              </div>
-              <div className="flex items-center gap-2">
                 <button
                   onClick={handleCopy}
                   className="p-2 text-sm font-medium text-[#00f3ff] bg-[#00f3ff]/10 hover:bg-[#00f3ff]/20 rounded-lg transition-colors cyber-border"
