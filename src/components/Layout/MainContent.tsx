@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Header } from '../Header';
 import { VoiceSettings } from '../VoiceSettings';
 import { ChatContainer } from '../ChatContainer';
 import { ChatInput } from '../ChatInput';
 import { ChatSession, VoiceConfig, MistralModel } from '../../types';
+import { SearchModal } from '../SearchModal';
 
 interface MainContentProps {
   currentSession: ChatSession;
@@ -13,6 +14,7 @@ interface MainContentProps {
   error: string | null;
   isSpeaking: boolean;
   isProcessingFile: boolean;
+  isWebSearchActive?: boolean;
   onToggleSettings: () => void;
   setVoiceConfig: React.Dispatch<React.SetStateAction<VoiceConfig>>;
   onCloseSettings: () => void;
@@ -23,6 +25,7 @@ interface MainContentProps {
   onSpeak: (text: string) => void;
   onRegenerate: () => void;
   onNavigateResponse?: (direction: 'prev' | 'next') => void;
+  onToggleWebSearch?: () => void;
 }
 
 export const MainContent: React.FC<MainContentProps> = ({
@@ -33,6 +36,7 @@ export const MainContent: React.FC<MainContentProps> = ({
   error,
   isSpeaking,
   isProcessingFile,
+  isWebSearchActive = false,
   onToggleSettings,
   setVoiceConfig,
   onCloseSettings,
@@ -42,8 +46,31 @@ export const MainContent: React.FC<MainContentProps> = ({
   onChangeModel,
   onSpeak,
   onRegenerate,
-  onNavigateResponse
+  onNavigateResponse,
+  onToggleWebSearch
 }) => {
+  const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
+  const [searchContext, setSearchContext] = useState('');
+
+  const handleSearchResults = (results: string) => {
+    onSendMessage(`Please analyze these search results and provide insights:\n\n${results}`);
+  };
+
+  const handleOpenSearch = () => {
+    // Get the last assistant message as context
+    const lastAssistantMessage = [...currentSession.messages]
+      .reverse()
+      .find(message => message.role === 'assistant');
+    
+    if (lastAssistantMessage) {
+      setSearchContext(lastAssistantMessage.content);
+    } else {
+      setSearchContext('');
+    }
+    
+    setIsSearchModalOpen(true);
+  };
+
   return (
     <div className="flex-1 flex flex-col h-screen overflow-hidden">
       <div className="flex-1 flex flex-col h-full max-w-none w-full">
@@ -68,7 +95,40 @@ export const MainContent: React.FC<MainContentProps> = ({
                 messages={currentSession.messages}
                 isLoading={isLoading}
                 error={error}
-                isSpeaking={isSpe
-                }
-  )
-}
+                isSpeaking={isSpeaking}
+                onExecuteCode={onExecuteCode}
+                onRegenerate={onRegenerate}
+                onSpeak={onSpeak}
+                onNavigateResponse={onNavigateResponse}
+                onSendMessage={onSendMessage}
+              />
+            </div>
+
+            <div className="mt-3 md:mt-4">
+              <ChatInput
+                onSend={onSendMessage}
+                onUploadDocument={onUploadDocument}
+                disabled={isLoading}
+                isSpeaking={isSpeaking}
+                currentModel={currentSession.model}
+                onChangeModel={onChangeModel}
+                isProcessingFile={isProcessingFile}
+                isWebSearchActive={isWebSearchActive}
+                onToggleWebSearch={onToggleWebSearch}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {isSearchModalOpen && (
+        <SearchModal
+          isOpen={isSearchModalOpen}
+          onClose={() => setIsSearchModalOpen(false)}
+          onSearchResults={handleSearchResults}
+          context={searchContext}
+        />
+      )}
+    </div>
+  );
+};

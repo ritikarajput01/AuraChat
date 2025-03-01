@@ -13,6 +13,7 @@ interface ChatMessageProps {
   isLastAssistantMessage?: boolean;
   onSpeak?: (text: string) => void;
   onNavigate?: (direction: 'prev' | 'next') => void;
+  onSearchResults?: (results: string) => void;
 }
 
 export const ChatMessage: React.FC<ChatMessageProps> = ({ 
@@ -22,7 +23,8 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
   onRegenerate,
   isLastAssistantMessage,
   onSpeak,
-  onNavigate
+  onNavigate,
+  onSearchResults
 }) => {
   const isBot = message.role === 'assistant';
   const [isRegenerating, setIsRegenerating] = useState(false);
@@ -84,10 +86,13 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
   const totalAlternatives = message.alternatives?.length || 0;
   const currentIndex = message.currentAlternativeIndex || 0;
 
+  // Check if this message was generated with web search
+  const isWebSearchResult = message.webSearch === true;
+
   return (
     <div className={`flex gap-3 md:gap-6 p-3 md:p-6 rounded-xl md:rounded-2xl transition-all message-bubble ${
       isBot ? 'assistant' : ''
-    }`}>
+    } ${isWebSearchResult ? 'web-search-result border-[#00f3ff]/70' : ''}`}>
       <div className={`shrink-0 w-8 h-8 md:w-12 md:h-12 rounded-lg md:rounded-xl flex items-center justify-center cyber-border ${
         isBot ? 'bg-[#00f3ff]/10 text-[#00f3ff]' : 'bg-[#bc13fe]/10 text-[#bc13fe]'
       }`}>
@@ -100,6 +105,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
           isSpeaking={isSpeaking}
           onSpeak={isBot ? handleSpeak : undefined}
           language={message.language}
+          isWebSearchResult={isWebSearchResult}
         />
         
         <MessageContent 
@@ -117,6 +123,8 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
             hasAlternatives={hasAlternatives}
             currentAlternativeIndex={currentIndex}
             totalAlternatives={totalAlternatives}
+            onSearchResults={onSearchResults}
+            isWebSearchResult={isWebSearchResult}
           />
         )}
       </div>

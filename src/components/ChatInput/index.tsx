@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Globe } from 'lucide-react';
-import { MistralModel, SUPPORTED_LANGUAGES } from '../../types';
+import { Mic, Send, Plus, Loader2, Globe } from 'lucide-react';
+import { MistralModel, MISTRAL_MODELS } from '../../types';
 import { ModelSelector } from './ModelSelector';
 import { FileUpload } from './FileUpload';
 import { MessageTextarea } from './MessageTextarea';
@@ -15,6 +15,8 @@ interface ChatInputProps {
   currentModel: MistralModel;
   onChangeModel: (model: MistralModel) => void;
   isProcessingFile?: boolean;
+  isWebSearchActive?: boolean;
+  onToggleWebSearch?: () => void;
 }
 
 export const ChatInput: React.FC<ChatInputProps> = ({ 
@@ -25,6 +27,8 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   currentModel,
   onChangeModel,
   isProcessingFile = false,
+  isWebSearchActive = false,
+  onToggleWebSearch
 }) => {
   const [message, setMessage] = useState('');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -134,6 +138,19 @@ export const ChatInput: React.FC<ChatInputProps> = ({
             onFileButtonClick={() => fileInputRef.current?.click()}
           />
 
+          <button
+            onClick={onToggleWebSearch}
+            className={`p-2.5 md:p-3 rounded-lg transition-all ${
+              isWebSearchActive 
+                ? 'bg-[#00f3ff]/30 border-2 border-[#00f3ff]/80 text-[#00f3ff] neon-glow' 
+                : 'bg-[#2a2a4a] border-2 border-[#00f3ff]/60 text-[#00f3ff] hover:bg-[#3a3a5a] hover:border-[#00f3ff] hover:text-white shadow-[0_0_20px_rgba(0,243,255,0.1)]'
+            }`}
+            type="button"
+            title={isWebSearchActive ? "Web search active" : "Search the web"}
+          >
+            <Globe className="w-4 h-4 md:w-5 md:h-5" />
+          </button>
+          
           <SpeechRecognition 
             onSpeechResult={handleSpeechResult}
             disabled={disabled || false}
@@ -155,6 +172,13 @@ export const ChatInput: React.FC<ChatInputProps> = ({
         <div className="mt-2 text-xs md:text-sm text-[#00f3ff] flex items-center gap-2 font-medium">
           <div className="w-1.5 h-1.5 bg-[#00f3ff] rounded-full animate-soft-pulse"></div>
           <span>AI is speaking...</span>
+        </div>
+      )}
+
+      {isWebSearchActive && (
+        <div className="mt-2 text-xs md:text-sm text-[#00f3ff] flex items-center gap-2 font-medium">
+          <div className="w-1.5 h-1.5 bg-[#00f3ff] rounded-full animate-soft-pulse"></div>
+          <span>Web search mode active - Your query will search the internet</span>
         </div>
       )}
     </div>

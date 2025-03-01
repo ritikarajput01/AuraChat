@@ -2,13 +2,15 @@ import { Message } from '../types';
 import { extractCodeBlocks } from '../utils/codeUtils';
 import { MistralClient } from '@mistralai/mistralai';
 import { detectLanguage, getLanguageSystemPrompt } from '../utils/languageUtils';
+import { performWebSearch } from '../utils/webSearchUtils';
 
 export function useMessageHandler(
   mistralClient: React.RefObject<MistralClient>,
   addMessage: (message: Message) => void,
   setChatState: (updater: (prev: any) => any) => void,
   getCurrentSession: () => any,
-  speakMessage: (text: string) => void
+  speakMessage: (text: string) => void,
+  isWebSearchActive: boolean = false
 ) {
   const handleSendMessage = async (content: string, isVoice: boolean = false, isRegeneration: boolean = false) => {
     if (!mistralClient.current) {
@@ -17,6 +19,11 @@ export function useMessageHandler(
         error: 'API key not configured. Please add VITE_MISTRAL_API_KEY to your environment variables.',
       }));
       return;
+    }
+
+    // If web search is active, use the web search handler
+    if (isWebSearchActive) {
+      return handleWebSearchMessage(content, isVoice);
     }
 
     // Detect language of the user message
@@ -188,6 +195,114 @@ export function useMessageHandler(
     }
   };
 
+  const handleWebSearchMessage = async (content: string, isVoice: boolean = false) => {
+    if (!mistralClient.current) {
+      setChatState(prev => ({
+        ...prev,
+        error: 'API key not configured. Please add VITE_MISTRAL_API_KEY to your environment variables.',
+      }));
+      return;
+    }
+
+    // Detect language of the user message
+    const detectedLanguage = detectLanguage(content);
+
+    // Add the user message
+    const newMessage: Message = {
+      role: 'user',
+      content,
+      isVoice,
+      timestamp: Date.now(),
+      language: detectedLanguage
+    };
+    addMessage(newMessage);
+
+    setChatState(prev => ({ ...prev, isLoading: true, error: null }));
+
+    try {
+      const apiKey = import.meta.env.VITE_MISTRAL_API_KEY;
+      if (!apiKey) {
+        throw new Error("API key not configured");
+      }
+
+      // Perform web search
+      const searchResults = await performWebSearch(content, apiKey);
+      
+      // Create a prompt that asks the AI to use the search results
+      const prompt = `
+I need to answer the following question: "${content}"
+
+Here are some search results from the web that might help:
+
+${searchResults}
+
+Please provide a comprehensive answer to the question based on these search results. 
+Include relevant information from the search results and cite your sources.
+Format your response in markdown with proper headings, lists, and citations.
+`;
+
+      // Get AI response
+      const response = await mistralClient.current.chat({
+        model: "mistral-small-latest",
+        messages: [
+          {
+            role: 'system',
+            content: getLanguageSystemPrompt(detectedLanguage)
+          },
+          { 
+            role: "user", 
+            content: prompt 
+          }
+        ],
+      });
+
+      const { text, blocks } = extractCodeBlocks(response.choices[0].message.content);
+
+      const assistantMessage: Message = {
+        role: 'assistant',
+        content: text,
+        codeBlocks: blocks,
+        timestamp: Date.now(),
+        language: detectedLanguage,
+        alternatives: [],
+        currentAlternativeIndex: 0,
+        originalContent: text,
+        webSearch: true
+      };
+
+      addMessage(assistantMessage);
+      
+      // Update session language
+      const currentSession = getCurrentSession();
+      setChatState(prev => ({
+        ...prev,
+        sessions: prev.sessions.map(s =>
+          s.id === currentSession.id
+            ? {
+                ...s,
+                language: detectedLanguage
+              }
+            : s
+        ),
+      }));
+
+      if (isVoice) {
+        setTimeout(() => {
+          speakMessage(text);
+        }, 100);
+      }
+
+      setChatState(prev => ({ ...prev, isLoading: false }));
+    } catch (error) {
+      console.error('Web search error:', error);
+      setChatState(prev => ({
+        ...prev,
+        isLoading: false,
+        error: `Failed to search the web: ${getErrorMessage(error)}`,
+      }));
+    }
+  };
+
   // Map our internal model names to Mistral API model names
   const mapToApiModelName = (modelId: string): string => {
     // This mapping should be updated based on Mistral's actual API model names
@@ -226,5 +341,5 @@ export function useMessageHandler(
     }
   };
 
-  return { handleSendMessage };
+  return { handleSendMessage, handleWebSearchMessage };
 }

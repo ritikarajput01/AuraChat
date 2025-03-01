@@ -70,15 +70,6 @@ Break down language barriers with automatic language detection and response:
   </table>
 </div>
 
-### 📱 Responsive Design
-
-A beautiful experience on any device:
-
-- **Mobile-First Approach**: Optimized for smartphones and tablets
-- **Adaptive Layout**: Seamlessly adjusts to any screen size
-- **Touch Optimization**: Large touch targets and intuitive gestures
-- **PWA Support**: Install as a standalone app on mobile devices
-
 ### 🔍 Web Search & Knowledge Base
 
 Extend your AI's knowledge with integrated search capabilities:
@@ -110,6 +101,15 @@ Immerse yourself in a futuristic interface:
   <img src="https://i.postimg.cc/L8JnHJZD/ui-showcase.gif" alt="UI Showcase" width="80%">
 </div>
 
+## 📱 Responsive Design
+
+A beautiful experience on any device:
+
+- **Mobile-First Approach**: Optimized for smartphones and tablets
+- **Adaptive Layout**: Seamlessly adjusts to any screen size
+- **Touch Optimization**: Large touch targets and intuitive gestures
+- **PWA Support**: Install as a standalone app on mobile devices
+
 ## 🛠️ Technical Architecture
 
 AuraChat is built with a modern tech stack:
@@ -117,23 +117,58 @@ AuraChat is built with a modern tech stack:
 ```
 AuraChat
 ├── 🧠 AI Integration
-│   ├── Mistral AI API
-│   ├── LangChain Framework
-│   └── RAG Implementation
+│   ├── Mistral AI API (@mistralai/mistralai)
+│   ├── LangChain Framework (@langchain/core, @langchain/community)
+│   └── RAG Implementation (Vector Search)
 ├── 🎨 Frontend
-│   ├── React 18.3
-│   ├── TypeScript 5.5
+│   ├── React 18.3 with TypeScript 5.5
 │   ├── Tailwind CSS 3.4
-│   └── Vite 5.4
+│   ├── Vite 5.4 (Build Tool)
+│   └── Lucide React (Icon System)
 ├── 🔧 Core Features
-│   ├── Monaco Editor
-│   ├── Web Speech API
-│   ├── Tesseract.js OCR
-│   └── Language Detection
+│   ├── Monaco Editor (@monaco-editor/react)
+│   ├── Web Speech API (Voice Recognition & Synthesis)
+│   ├── Tesseract.js (OCR for Images)
+│   ├── Language Detection (franc, ISO-639-1)
+│   └── Markdown Rendering (react-markdown)
+├── 📊 Data Management
+│   ├── Local Storage (Session Persistence)
+│   ├── Context-Based Memory
+│   └── Alternative Response Management
 └── 📱 Cross-Platform
     ├── Responsive Design
-    ├── PWA Support
-    └── Touch Optimization
+    ├── Mobile Optimization
+    └── Touch-Friendly Interface
+```
+
+## 🧩 Component Architecture
+
+AuraChat follows a modular component architecture:
+
+```
+src/
+├── components/
+│   ├── ChatContainer/       # Message display and management
+│   ├── ChatInput/           # User input with voice and file upload
+│   ├── ChatMessage/         # Individual message rendering
+│   ├── ChatSessions/        # Session management
+│   ├── CodeBlock/           # Code execution and display
+│   ├── Layout/              # Main application layout
+│   ├── SearchModal/         # Knowledge search interface
+│   └── WebSearchModal/      # Web search interface
+├── hooks/
+│   ├── useChatState/        # Chat state management
+│   ├── useCodeExecution/    # Code execution logic
+│   ├── useMessageHandler/   # Message processing
+│   ├── useMistralClient/    # AI client initialization
+│   └── useVoice/            # Voice interaction
+├── utils/
+│   ├── codeUtils/           # Code parsing and execution
+│   ├── documentParser/      # File and image processing
+│   ├── languageUtils/       # Language detection and translation
+│   ├── ragUtils/            # Retrieval-augmented generation
+│   └── webSearchUtils/      # Web search functionality
+└── types.ts                 # TypeScript type definitions
 ```
 
 ## 🚀 Quick Start
@@ -194,6 +229,36 @@ AuraChat gives you access to Mistral AI's full range of models:
   </table>
 </div>
 
+## 🔄 State Management
+
+AuraChat uses a custom state management system:
+
+- **Session Management**: Create, rename, and switch between chat sessions
+- **Message History**: Persistent storage of all conversations
+- **Alternative Responses**: Store and navigate between different AI responses
+- **Model Selection**: Change AI models on a per-session basis
+- **Language Detection**: Automatically detect and store the language of each session
+
+## 🌐 Web Search Integration
+
+AuraChat can search the web to enhance its responses:
+
+1. **Query Processing**: Analyze user questions to determine search intent
+2. **Web Search**: Retrieve relevant information from the internet
+3. **Result Integration**: Incorporate search results into AI responses
+4. **Citation**: Properly attribute information sources
+5. **Context Preservation**: Maintain conversation context with search results
+
+## 📊 RAG (Retrieval-Augmented Generation)
+
+AuraChat implements RAG for improved knowledge retrieval:
+
+1. **Text Chunking**: Split documents into manageable pieces
+2. **Embedding Generation**: Create vector representations of text
+3. **Similarity Search**: Find relevant information based on user queries
+4. **Context Integration**: Incorporate retrieved information into responses
+5. **Knowledge Base**: Build a personalized knowledge base from conversations
+
 ## 🔮 Future Roadmap
 
 We're constantly improving AuraChat with new features:
@@ -203,6 +268,123 @@ We're constantly improving AuraChat with new features:
 - **GitHub Integration**: Commit, PR, and issue management directly from chat
 - **Advanced Visualization**: Generate and display charts, diagrams, and graphs
 - **Custom Training**: Fine-tune models on your codebase for personalized assistance
+
+## 🧪 Advanced Features
+
+### Code Execution Engine
+
+The code execution system uses a sandboxed environment to safely run JavaScript:
+
+```javascript
+export const executeCode = (code: string): string => {
+  const sandbox = new Function(
+    'console',
+    `
+    try {
+      let log = '';
+      const customConsole = {
+        log: (...args) => {
+          log += args.map(arg => 
+            typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+          ).join(' ') + '\\n';
+        }
+      };
+      ${code};
+      return log;
+    } catch (error) {
+      throw error;
+    }
+    `
+  );
+
+  return sandbox({ log: console.log });
+};
+```
+
+### Language Detection System
+
+AuraChat automatically detects and adapts to the user's language:
+
+```typescript
+export const detectLanguage = (text: string): string => {
+  try {
+    // Use franc for language detection
+    const langCode = franc.franc(text, { minLength: 3 });
+    
+    // Convert 3-letter code to 2-letter ISO code
+    if (langCode && langCode !== 'und') {
+      const iso2Code = ISO6391.getCode(ISO6391.getName(langCode));
+      
+      // Check if the language is in our supported languages
+      if (iso2Code && SUPPORTED_LANGUAGES.some(lang => lang.code === iso2Code)) {
+        return iso2Code;
+      }
+    }
+    
+    // Default to English if detection fails or language not supported
+    return 'en';
+  } catch (error) {
+    console.error('Language detection error:', error);
+    return 'en';
+  }
+};
+```
+
+### Alternative Response Navigation
+
+AuraChat can generate multiple alternative responses to the same query:
+
+```typescript
+const navigateResponse = (direction: 'prev' | 'next') => {
+  updateCurrentSession(session => {
+    const updatedMessages = [...session.messages];
+    const lastAssistantMessageIndex = updatedMessages.findIndex(
+      (msg, idx) => msg.role === 'assistant' && 
+      (idx === updatedMessages.length - 1 || updatedMessages[idx + 1]?.role === 'user')
+    );
+    
+    if (lastAssistantMessageIndex === -1) return session;
+    
+    const lastAssistantMessage = updatedMessages[lastAssistantMessageIndex];
+    
+    if (!lastAssistantMessage.alternatives || lastAssistantMessage.alternatives.length === 0) {
+      return session;
+    }
+    
+    const currentIndex = lastAssistantMessage.currentAlternativeIndex || 0;
+    const totalAlternatives = lastAssistantMessage.alternatives.length;
+    
+    let newIndex;
+    if (direction === 'next') {
+      newIndex = (currentIndex + 1) % (totalAlternatives + 1);
+    } else {
+      newIndex = (currentIndex - 1 + totalAlternatives + 1) % (totalAlternatives + 1);
+    }
+    
+    // Update the message content based on the new index
+    if (newIndex === 0) {
+      // Show original response
+      updatedMessages[lastAssistantMessageIndex] = {
+        ...lastAssistantMessage,
+        content: lastAssistantMessage.originalContent || lastAssistantMessage.content,
+        currentAlternativeIndex: 0
+      };
+    } else {
+      // Show alternative response
+      updatedMessages[lastAssistantMessageIndex] = {
+        ...lastAssistantMessage,
+        content: lastAssistantMessage.alternatives[newIndex - 1],
+        currentAlternativeIndex: newIndex
+      };
+    }
+    
+    return {
+      ...session,
+      messages: updatedMessages
+    };
+  });
+};
+```
 
 ## 🤝 Contributing
 

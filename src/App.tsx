@@ -6,6 +6,7 @@ import { useMistralClient } from './hooks/useMistralClient';
 import { useMessageHandler } from './hooks/useMessageHandler';
 import { useCodeExecution } from './hooks/useCodeExecution';
 import { parseDocument } from './utils/documentParser';
+import { performWebSearch } from './utils/webSearchUtils';
 
 function App() {
   const {
@@ -24,15 +25,17 @@ function App() {
   const [showSettings, setShowSettings] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProcessingFile, setIsProcessingFile] = useState(false);
+  const [isWebSearchActive, setIsWebSearchActive] = useState(false);
 
   const { voiceConfig, setVoiceConfig, initializeVoice, speakMessage, stopSpeaking } = useVoice(setChatState);
   const mistralClient = useMistralClient();
-  const { handleSendMessage } = useMessageHandler(
+  const { handleSendMessage, handleWebSearchMessage } = useMessageHandler(
     mistralClient,
     addMessage,
     setChatState,
     getCurrentSession,
-    speakMessage
+    speakMessage,
+    isWebSearchActive
   );
   const { handleExecuteCode } = useCodeExecution(updateCurrentSession);
 
@@ -56,6 +59,10 @@ function App() {
     } finally {
       setIsProcessingFile(false);
     }
+  };
+
+  const toggleWebSearch = () => {
+    setIsWebSearchActive(!isWebSearchActive);
   };
 
   useEffect(() => {
@@ -102,6 +109,8 @@ function App() {
       onSpeak={handleSpeak}
       onNavigateResponse={handleNavigateResponseWrapper}
       isProcessingFile={isProcessingFile}
+      isWebSearchActive={isWebSearchActive}
+      onToggleWebSearch={toggleWebSearch}
     />
   );
 }

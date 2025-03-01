@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Message } from '../../types';
 import { ChatMessage } from '../ChatMessage';
 import { EmptyState } from './EmptyState';
@@ -14,6 +14,7 @@ interface ChatContainerProps {
   onRegenerate?: () => void;
   onSpeak?: (text: string) => void;
   onNavigateResponse?: (direction: 'prev' | 'next') => void;
+  onSendMessage?: (message: string) => void;
 }
 
 export const ChatContainer: React.FC<ChatContainerProps> = ({
@@ -24,12 +25,19 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({
   onExecuteCode,
   onRegenerate,
   onSpeak,
-  onNavigateResponse
+  onNavigateResponse,
+  onSendMessage
 }) => {
   const lastAssistantMessageIndex = [...messages].reverse().findIndex(m => m.role === 'assistant');
   const lastAssistantMessage = lastAssistantMessageIndex !== -1 
     ? messages.length - 1 - lastAssistantMessageIndex 
     : -1;
+
+  const handleSearchResults = (results: string) => {
+    if (onSendMessage) {
+      onSendMessage(`Please analyze these search results and provide insights:\n\n${results}`);
+    }
+  };
 
   return (
     <div className="flex-1 flex flex-col h-full overflow-hidden">
@@ -48,6 +56,7 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({
                 isLastAssistantMessage={index === lastAssistantMessage}
                 onSpeak={onSpeak}
                 onNavigate={index === lastAssistantMessage ? onNavigateResponse : undefined}
+                onSearchResults={index === lastAssistantMessage && message.role === 'assistant' ? handleSearchResults : undefined}
               />
             ))}
           </div>

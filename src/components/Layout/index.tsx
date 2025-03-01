@@ -14,6 +14,7 @@ interface LayoutProps {
   isSpeaking: boolean;
   currentSession: ChatSession;
   isProcessingFile: boolean;
+  isWebSearchActive?: boolean;
   onSelectSession: (id: string) => void;
   onCreateSession: (name: string) => void;
   onDeleteSession: (id: string) => void;
@@ -28,6 +29,7 @@ interface LayoutProps {
   onChangeModel: (sessionId: string, model: MistralModel) => void;
   onSpeak: (text: string) => void;
   onNavigateResponse: (direction: 'prev' | 'next') => void;
+  onToggleWebSearch?: () => void;
 }
 
 export const Layout: React.FC<LayoutProps> = ({
@@ -41,6 +43,7 @@ export const Layout: React.FC<LayoutProps> = ({
   isSpeaking,
   currentSession,
   isProcessingFile,
+  isWebSearchActive = false,
   onSelectSession,
   onCreateSession,
   onDeleteSession,
@@ -54,7 +57,8 @@ export const Layout: React.FC<LayoutProps> = ({
   onUploadDocument,
   onChangeModel,
   onSpeak,
-  onNavigateResponse
+  onNavigateResponse,
+  onToggleWebSearch
 }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
@@ -94,6 +98,7 @@ export const Layout: React.FC<LayoutProps> = ({
         error={error}
         isSpeaking={isSpeaking}
         isProcessingFile={isProcessingFile}
+        isWebSearchActive={isWebSearchActive}
         onToggleSettings={onToggleSettings}
         setVoiceConfig={setVoiceConfig}
         onCloseSettings={onCloseSettings}
@@ -104,6 +109,7 @@ export const Layout: React.FC<LayoutProps> = ({
         onSpeak={onSpeak}
         onRegenerate={handleRegenerate}
         onNavigateResponse={onNavigateResponse}
+        onToggleWebSearch={onToggleWebSearch}
       />
     </div>
   );
