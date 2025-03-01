@@ -15,7 +15,7 @@ export const MessageContent: React.FC<MessageContentProps> = ({
   isBot
 }) => {
   return (
-    <div className="prose prose-invert max-w-none text-sm md:text-base">
+    <div className="prose prose-invert max-w-none text-sm md:text-base overflow-hidden">
       <ReactMarkdown
         components={{
           p: ({ children }) => <div className="mb-3 last:mb-0">{children}</div>,
@@ -31,7 +31,7 @@ export const MessageContent: React.FC<MessageContentProps> = ({
 
               if (codeBlock) {
                 return (
-                  <div className="my-3">
+                  <div className="my-3 max-w-full overflow-x-auto">
                     <CodeBlock
                       block={codeBlock}
                       onExecute={onExecuteCode}
@@ -47,7 +47,7 @@ export const MessageContent: React.FC<MessageContentProps> = ({
                 {children}
               </code>
             ) : (
-              <div className="my-3">
+              <div className="my-3 max-w-full overflow-x-auto">
                 <CodeBlock
                   block={{
                     id: Math.random().toString(36).substr(2, 9),
@@ -60,6 +60,40 @@ export const MessageContent: React.FC<MessageContentProps> = ({
               </div>
             );
           },
+          img: ({ node, ...props }) => (
+            <img 
+              {...props} 
+              className="max-w-full h-auto rounded-lg my-4"
+              style={{ maxHeight: '300px', objectFit: 'contain' }}
+            />
+          ),
+          table: ({ children }) => (
+            <div className="overflow-x-auto my-4">
+              <table className="border-collapse border border-[#00f3ff]/30 w-full">
+                {children}
+              </table>
+            </div>
+          ),
+          th: ({ children }) => (
+            <th className="border border-[#00f3ff]/30 bg-[#00f3ff]/10 p-2 text-left">
+              {children}
+            </th>
+          ),
+          td: ({ children }) => (
+            <td className="border border-[#00f3ff]/30 p-2">
+              {children}
+            </td>
+          ),
+          a: ({ children, href }) => (
+            <a 
+              href={href} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-[#00f3ff] hover:underline"
+            >
+              {children}
+            </a>
+          ),
         }}
       >
         {message.content}

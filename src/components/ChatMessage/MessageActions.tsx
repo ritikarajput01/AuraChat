@@ -48,83 +48,81 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
 
   return (
     <>
-      <div className="mt-4 flex items-center justify-end">
-        <div className="flex items-center gap-2">
-          {isRegenerating && (
-            <span className="text-sm text-[#00f3ff]/60 mr-2">
-              Regenerating...
-            </span>
-          )}
-          
-          {hasAlternatives && totalAlternatives > 0 && (
-            <div className="flex items-center mr-2">
-              <button
-                onClick={() => onNavigate?.('prev')}
-                className="p-2 text-sm font-medium text-[#00f3ff] bg-[#00f3ff]/10 hover:bg-[#00f3ff]/20 rounded-l-lg transition-colors cyber-border border-r-0"
-                title="Previous response"
-              >
-                <ChevronLeft className="w-4 h-4" />
-              </button>
-              
-              <div className="px-3 py-2 text-sm font-medium text-[#00f3ff] bg-[#00f3ff]/10 border-y-2 border-[#00f3ff]/40">
-                {currentAlternativeIndex === 0 ? 'Original' : `${currentAlternativeIndex}/${totalAlternatives}`}
-              </div>
-              
-              <button
-                onClick={() => onNavigate?.('next')}
-                className="p-2 text-sm font-medium text-[#00f3ff] bg-[#00f3ff]/10 hover:bg-[#00f3ff]/20 rounded-r-lg transition-colors cyber-border border-l-0"
-                title="Next response"
-              >
-                <ChevronRight className="w-4 h-4" />
-              </button>
-            </div>
-          )}
-          
-          {onSearchResults && !isWebSearchResult && (
-            <>
-              <button
-                onClick={() => setIsWebSearchModalOpen(true)}
-                className="p-2 text-sm font-medium text-[#00f3ff] bg-[#00f3ff]/10 hover:bg-[#00f3ff]/20 rounded-lg transition-colors cyber-border"
-                title="Search the web"
-              >
-                <Globe className="w-4 h-4" />
-              </button>
-              
-              <button
-                onClick={() => setIsSearchModalOpen(true)}
-                className="p-2 text-sm font-medium text-[#00f3ff] bg-[#00f3ff]/10 hover:bg-[#00f3ff]/20 rounded-lg transition-colors cyber-border"
-                title="Search knowledge base"
-              >
-                <Search className="w-4 h-4" />
-              </button>
-            </>
-          )}
-          
-          <button
-            onClick={handleCopy}
-            className="p-2 text-sm font-medium text-[#00f3ff] bg-[#00f3ff]/10 hover:bg-[#00f3ff]/20 rounded-lg transition-colors cyber-border"
-            title="Copy message"
-          >
-            {copied ? (
-              <Check className="w-4 h-4" />
-            ) : (
-              <Copy className="w-4 h-4" />
-            )}
-          </button>
-          
-          {onRegenerate && !isWebSearchResult && (
+      <div className="mt-3 md:mt-4 flex flex-wrap items-center justify-end gap-1 md:gap-2">
+        {isRegenerating && (
+          <span className="text-xs md:text-sm text-[#00f3ff]/60 mr-1 md:mr-2">
+            Regenerating...
+          </span>
+        )}
+        
+        {hasAlternatives && totalAlternatives > 0 && (
+          <div className="flex items-center mr-1 md:mr-2">
             <button
-              onClick={onRegenerate}
-              disabled={isRegenerating}
-              className={`p-2 text-sm font-medium text-[#00f3ff] bg-[#00f3ff]/10 hover:bg-[#00f3ff]/20 rounded-lg transition-colors cyber-border ${
-                isRegenerating ? 'opacity-50 cursor-not-allowed' : ''
-              }`}
-              title="Regenerate response"
+              onClick={() => onNavigate?.('prev')}
+              className="p-1.5 md:p-2 text-sm font-medium text-[#00f3ff] bg-[#00f3ff]/10 hover:bg-[#00f3ff]/20 rounded-l-lg transition-colors cyber-border border-r-0"
+              title="Previous response"
             >
-              <RotateCcw className={`w-4 h-4 ${isRegenerating ? 'animate-spin' : ''}`} />
+              <ChevronLeft className="w-3 h-3 md:w-4 md:h-4" />
             </button>
+            
+            <div className="px-2 py-1.5 text-xs md:text-sm font-medium text-[#00f3ff] bg-[#00f3ff]/10 border-y-2 border-[#00f3ff]/40">
+              {currentAlternativeIndex === 0 ? 'Original' : `${currentAlternativeIndex}/${totalAlternatives}`}
+            </div>
+            
+            <button
+              onClick={() => onNavigate?.('next')}
+              className="p-1.5 md:p-2 text-sm font-medium text-[#00f3ff] bg-[#00f3ff]/10 hover:bg-[#00f3ff]/20 rounded-r-lg transition-colors cyber-border border-l-0"
+              title="Next response"
+            >
+              <ChevronRight className="w-3 h-3 md:w-4 md:h-4" />
+            </button>
+          </div>
+        )}
+        
+        {onSearchResults && !isWebSearchResult && (
+          <>
+            <button
+              onClick={() => setIsWebSearchModalOpen(true)}
+              className="p-1.5 md:p-2 text-sm font-medium text-[#00f3ff] bg-[#00f3ff]/10 hover:bg-[#00f3ff]/20 rounded-lg transition-colors cyber-border"
+              title="Search the web"
+            >
+              <Globe className="w-3 h-3 md:w-4 md:h-4" />
+            </button>
+            
+            <button
+              onClick={() => setIsSearchModalOpen(true)}
+              className="p-1.5 md:p-2 text-sm font-medium text-[#00f3ff] bg-[#00f3ff]/10 hover:bg-[#00f3ff]/20 rounded-lg transition-colors cyber-border"
+              title="Search knowledge base"
+            >
+              <Search className="w-3 h-3 md:w-4 md:h-4" />
+            </button>
+          </>
+        )}
+        
+        <button
+          onClick={handleCopy}
+          className="p-1.5 md:p-2 text-sm font-medium text-[#00f3ff] bg-[#00f3ff]/10 hover:bg-[#00f3ff]/20 rounded-lg transition-colors cyber-border"
+          title="Copy message"
+        >
+          {copied ? (
+            <Check className="w-3 h-3 md:w-4 md:h-4" />
+          ) : (
+            <Copy className="w-3 h-3 md:w-4 md:h-4" />
           )}
-        </div>
+        </button>
+        
+        {onRegenerate && !isWebSearchResult && (
+          <button
+            onClick={onRegenerate}
+            disabled={isRegenerating}
+            className={`p-1.5 md:p-2 text-sm font-medium text-[#00f3ff] bg-[#00f3ff]/10 hover:bg-[#00f3ff]/20 rounded-lg transition-colors cyber-border ${
+              isRegenerating ? 'opacity-50 cursor-not-allowed' : ''
+            }`}
+            title="Regenerate response"
+          >
+            <RotateCcw className={`w-3 h-3 md:w-4 md:h-4 ${isRegenerating ? 'animate-spin' : ''}`} />
+          </button>
+        )}
       </div>
       
       {isSearchModalOpen && (

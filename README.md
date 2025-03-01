@@ -269,6 +269,18 @@ We're constantly improving AuraChat with new features:
 - **Advanced Visualization**: Generate and display charts, diagrams, and graphs
 - **Custom Training**: Fine-tune models on your codebase for personalized assistance
 
+## 📱 Mobile Responsiveness
+
+AuraChat is designed with a mobile-first approach:
+
+- **Adaptive Layout**: Automatically adjusts to any screen size
+- **Touch-Optimized UI**: Large touch targets for easy interaction
+- **Responsive Typography**: Text scales appropriately across devices
+- **Efficient Space Usage**: Compact layout on small screens without sacrificing functionality
+- **Optimized Modals**: Search and settings modals designed for mobile interaction
+- **Gesture Support**: Swipe and touch gestures for natural mobile navigation
+- **Safe Area Support**: Respects device notches and home indicators
+
 ## 🧪 Advanced Features
 
 ### Code Execution Engine

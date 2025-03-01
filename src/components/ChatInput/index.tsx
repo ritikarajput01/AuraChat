@@ -97,16 +97,16 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   return (
     <div className="p-2 md:p-4 glass-panel rounded-lg md:rounded-xl bg-[#1a1a3a]/95 shadow-[0_0_30px_rgba(0,243,255,0.2)]">
       <div className="flex flex-col gap-2 md:gap-3">
-        <div className="flex justify-between items-center">
+        <div className="flex flex-wrap justify-between items-center gap-2">
           <ModelSelector 
             currentModel={currentModel} 
             onChangeModel={onChangeModel} 
           />
           
           {detectedLanguage && (
-            <div className="flex items-center gap-2 text-sm text-[#00f3ff] bg-[#00f3ff]/10 px-3 py-1.5 rounded-lg">
-              <Globe className="w-4 h-4" />
-              <span>{getLanguageName(detectedLanguage)} ({getNativeLanguageName(detectedLanguage)})</span>
+            <div className="flex items-center gap-2 text-xs md:text-sm text-[#00f3ff] bg-[#00f3ff]/10 px-2 py-1 md:px-3 md:py-1.5 rounded-lg">
+              <Globe className="w-3 h-3 md:w-4 md:h-4" />
+              <span className="truncate">{getLanguageName(detectedLanguage)} ({getNativeLanguageName(detectedLanguage)})</span>
             </div>
           )}
         </div>
@@ -140,7 +140,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
 
           <button
             onClick={onToggleWebSearch}
-            className={`p-2.5 md:p-3 rounded-lg transition-all ${
+            className={`p-2 md:p-2.5 rounded-lg transition-all ${
               isWebSearchActive 
                 ? 'bg-[#00f3ff]/30 border-2 border-[#00f3ff]/80 text-[#00f3ff] neon-glow' 
                 : 'bg-[#2a2a4a] border-2 border-[#00f3ff]/60 text-[#00f3ff] hover:bg-[#3a3a5a] hover:border-[#00f3ff] hover:text-white shadow-[0_0_20px_rgba(0,243,255,0.1)]'
@@ -160,7 +160,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
           <button
             onClick={() => handleSend()}
             disabled={disabled || (!message.trim() && !selectedFile)}
-            className="p-2.5 md:p-3 rounded-lg bg-[#00f3ff]/30 text-[#00f3ff] border-2 border-[#00f3ff]/60 hover:bg-[#00f3ff]/40 hover:border-[#00f3ff] hover:text-white transition-all disabled:opacity-50 disabled:hover:bg-[#00f3ff]/30 shadow-[0_0_20px_rgba(0,243,255,0.1)]"
+            className="p-2 md:p-2.5 rounded-lg bg-[#00f3ff]/30 text-[#00f3ff] border-2 border-[#00f3ff]/60 hover:bg-[#00f3ff]/40 hover:border-[#00f3ff] hover:text-white transition-all disabled:opacity-50 disabled:hover:bg-[#00f3ff]/30 shadow-[0_0_20px_rgba(0,243,255,0.1)]"
             type="button"
           >
             <Send className="w-4 h-4 md:w-5 md:h-5" />

@@ -28,7 +28,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     <>
       <button
         onClick={toggleSidebar}
-        className="fixed top-4 left-4 z-50 p-2.5 bg-[#1a1a3a] cyber-border rounded-xl neon-glow hover:bg-[#1a1a3a]/80 transition-colors md:hidden"
+        className="fixed top-2 left-2 z-50 p-2 bg-[#1a1a3a] cyber-border rounded-lg neon-glow hover:bg-[#1a1a3a]/80 transition-colors md:hidden"
       >
         {isSidebarOpen ? (
           <X className="w-5 h-5 text-[#00f3ff]" />
@@ -40,7 +40,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       <div
         className={`fixed inset-y-0 left-0 transform ${
           isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
-        } transition-transform duration-300 ease-in-out z-40 w-[280px] bg-[#1a1a3a] border-r border-[#00f3ff]/30 shadow-2xl shadow-[#00f3ff]/10 md:relative md:translate-x-0`}
+        } transition-transform duration-300 ease-in-out z-40 w-[250px] bg-[#1a1a3a] border-r border-[#00f3ff]/30 shadow-2xl shadow-[#00f3ff]/10 md:relative md:translate-x-0`}
       >
         <ChatSessions
           sessions={sessions}

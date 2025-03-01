@@ -74,7 +74,7 @@ export const MainContent: React.FC<MainContentProps> = ({
   return (
     <div className="flex-1 flex flex-col h-screen overflow-hidden">
       <div className="flex-1 flex flex-col h-full max-w-none w-full">
-        <div className="container mx-auto px-3 md:px-6 flex flex-col h-full max-w-none pt-16 md:pt-4 pb-3 md:pb-4">
+        <div className="container mx-auto px-2 md:px-6 flex flex-col h-full max-w-none pt-12 md:pt-4 pb-2 md:pb-4">
           <Header
             sessionsCount={0}
             onToggleSessions={() => {}}
@@ -89,7 +89,7 @@ export const MainContent: React.FC<MainContentProps> = ({
             />
           )}
 
-          <div className="flex-1 flex flex-col overflow-hidden min-h-0 mt-3 md:mt-4">
+          <div className="flex-1 flex flex-col overflow-hidden min-h-0 mt-2 md:mt-4">
             <div className="flex-1 min-h-0">
               <ChatContainer
                 messages={currentSession.messages}
@@ -99,36 +99,7 @@ export const MainContent: React.FC<MainContentProps> = ({
                 onExecuteCode={onExecuteCode}
                 onRegenerate={onRegenerate}
                 onSpeak={onSpeak}
-                onNavigateResponse={onNavigateResponse}
-                onSendMessage={onSendMessage}
-              />
-            </div>
-
-            <div className="mt-3 md:mt-4">
-              <ChatInput
-                onSend={onSendMessage}
-                onUploadDocument={onUploadDocument}
-                disabled={isLoading}
-                isSpeaking={isSpeaking}
-                currentModel={currentSession.model}
-                onChangeModel={onChangeModel}
-                isProcessingFile={isProcessingFile}
-                isWebSearchActive={isWebSearchActive}
-                onToggleWebSearch={onToggleWebSearch}
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {isSearchModalOpen && (
-        <SearchModal
-          isOpen={isSearchModalOpen}
-          onClose={() => setIsSearchModalOpen(false)}
-          onSearchResults={handleSearchResults}
-          context={searchContext}
-        />
-      )}
-    </div>
-  );
-};
+                onNavigateResponse={onNavig
+                }
+  )
+}

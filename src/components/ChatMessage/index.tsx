@@ -90,7 +90,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
   const isWebSearchResult = message.webSearch === true;
 
   return (
-    <div className={`flex gap-3 md:gap-6 p-3 md:p-6 rounded-xl md:rounded-2xl transition-all message-bubble ${
+    <div className={`flex gap-2 md:gap-6 p-2 md:p-6 rounded-xl md:rounded-2xl transition-all message-bubble ${
       isBot ? 'assistant' : ''
     } ${isWebSearchResult ? 'web-search-result border-[#00f3ff]/70' : ''}`}>
       <div className={`shrink-0 w-8 h-8 md:w-12 md:h-12 rounded-lg md:rounded-xl flex items-center justify-center cyber-border ${
@@ -98,7 +98,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
       }`}>
         {isBot ? <Bot className="w-4 h-4 md:w-6 md:h-6" /> : <User className="w-4 h-4 md:w-6 md:h-6" />}
       </div>
-      <div className="flex-1 min-w-0">
+      <div className="flex-1 min-w-0 overflow-hidden">
         <MessageHeader 
           isBot={isBot} 
           isVoice={message.isVoice} 

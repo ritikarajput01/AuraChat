@@ -94,6 +94,8 @@ function App() {
       error={chatState.error}
       isSpeaking={chatState.isSpeaking}
       currentSession={currentSession}
+      isProcessingFile={isProcessingFile}
+      isWebSearchActive={isWebSearchActive}
       onSelectSession={(id) => setChatState(prev => ({ ...prev, currentSessionId: id }))}
       onCreateSession={handleCreateSession}
       onDeleteSession={handleDeleteSession}
@@ -108,8 +110,6 @@ function App() {
       onChangeModel={handleChangeModel}
       onSpeak={handleSpeak}
       onNavigateResponse={handleNavigateResponseWrapper}
-      isProcessingFile={isProcessingFile}
-      isWebSearchActive={isWebSearchActive}
       onToggleWebSearch={toggleWebSearch}
     />
   );
