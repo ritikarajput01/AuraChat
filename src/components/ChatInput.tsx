@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Mic, Send, Square, Plus, Loader2, X } from 'lucide-react';
+import { Mic, Send, Square, Plus, Loader2, X, Globe } from 'lucide-react';
 import { MistralModel, MISTRAL_MODELS } from '../types';
 
 interface ChatInputProps {
@@ -10,6 +10,8 @@ interface ChatInputProps {
   currentModel: MistralModel;
   onChangeModel: (model: MistralModel) => void;
   isProcessingFile?: boolean;
+  isWebSearchActive?: boolean;
+  onToggleWebSearch?: () => void;
 }
 
 export const ChatInput: React.FC<ChatInputProps> = ({ 
@@ -20,6 +22,8 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   currentModel,
   onChangeModel,
   isProcessingFile = false,
+  isWebSearchActive = false,
+  onToggleWebSearch
 }) => {
   const [message, setMessage] = useState('');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -120,6 +124,12 @@ export const ChatInput: React.FC<ChatInputProps> = ({
     }
   };
 
+  const handleToggleWebSearch = () => {
+    if (onToggleWebSearch) {
+      onToggleWebSearch();
+    }
+  };
+
   return (
     <div className="p-2 md:p-4 glass-panel rounded-lg md:rounded-xl bg-[#1a1a3a]/95 shadow-[0_0_30px_rgba(0,243,255,0.2)]">
       <div className="flex flex-col gap-2 md:gap-3">
@@ -190,6 +200,22 @@ export const ChatInput: React.FC<ChatInputProps> = ({
             />
           </div>
 
+          {/* Web Search Button */}
+          {onToggleWebSearch && (
+            <button
+              onClick={handleToggleWebSearch}
+              className={`p-2.5 md:p-3 rounded-lg transition-all ${
+                isWebSearchActive 
+                  ? 'bg-[#00f3ff]/40 border-2 border-[#00f3ff] text-white shadow-[0_0_15px_rgba(0,243,255,0.4)]' 
+                  : 'bg-[#2a2a4a] border-2 border-[#00f3ff]/60 text-[#00f3ff] hover:bg-[#3a3a5a] hover:border-[#00f3ff] hover:text-white shadow-[0_0_20px_rgba(0,243,255,0.1)]'
+              }`}
+              type="button"
+              title={isWebSearchActive ? "Web search active" : "Enable web search"}
+            >
+              <Globe className="w-4 h-4 md:w-5 md:h-5" />
+            </button>
+          )}
+
           {isRecognitionSupported && (
             <button
               onClick={toggleSpeechRecognition}
@@ -215,10 +241,14 @@ export const ChatInput: React.FC<ChatInputProps> = ({
           </button>
         </div>
       </div>
-      {(isSpeaking || isListening) && (
+      {(isSpeaking || isListening || isWebSearchActive) && (
         <div className="mt-2 text-xs md:text-sm text-[#00f3ff] flex items-center gap-2 font-medium">
           <div className="w-1.5 h-1.5 bg-[#00f3ff] rounded-full animate-soft-pulse"></div>
-          <span>{isListening ? "Listening..." : "AI is speaking..."}</span>
+          <span>
+            {isListening ? "Listening..." : 
+             isWebSearchActive ? "Web search mode active" : 
+             "AI is speaking..."}
+          </span>
         </div>
       )}
     </div>

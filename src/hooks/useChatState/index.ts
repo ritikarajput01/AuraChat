@@ -11,7 +11,15 @@ export function useChatState() {
       if (savedState) {
         const parsedState = JSON.parse(savedState);
         if (parsedState.sessions && parsedState.sessions.length > 0) {
-          return parsedState;
+          // Update any existing sessions to use valid models
+          const updatedSessions = parsedState.sessions.map((session: ChatSession) => {
+            // If the model is not in our current list, default to mistral-large
+            if (session.model !== 'mistral-large' && session.model !== 'codestral') {
+              return { ...session, model: 'mistral-large' };
+            }
+            return session;
+          });
+          return { ...parsedState, sessions: updatedSessions };
         }
       }
     } catch (error) {
@@ -23,7 +31,7 @@ export function useChatState() {
       name: 'New Chat',
       createdAt: Date.now(),
       messages: [],
-      model: 'mistral-small', // Updated default model
+      model: 'mistral-large', // Default model
     };
     return {
       sessions: [initialSession],
@@ -55,7 +63,7 @@ export function useChatState() {
     }));
   };
 
-  const handleCreateSession = (name: string = 'New Chat', model: MistralModel = 'mistral-small') => {
+  const handleCreateSession = (name: string = 'New Chat', model: MistralModel = 'mistral-large') => {
     const newSession: ChatSession = {
       id: Math.random().toString(36).substr(2, 9),
       name,
@@ -81,7 +89,7 @@ export function useChatState() {
           name: 'New Chat',
           createdAt: Date.now(),
           messages: [],
-          model: 'mistral-small', // Updated default model
+          model: 'mistral-large', // Default model
         };
         return {
           ...prev,

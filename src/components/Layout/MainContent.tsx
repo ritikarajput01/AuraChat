@@ -99,7 +99,36 @@ export const MainContent: React.FC<MainContentProps> = ({
                 onExecuteCode={onExecuteCode}
                 onRegenerate={onRegenerate}
                 onSpeak={onSpeak}
-                onNavigateResponse={onNavig
-                }
-  )
-}
+                onNavigateResponse={onNavigateResponse}
+                onSendMessage={onSendMessage}
+              />
+            </div>
+
+            <div className="mt-2 md:mt-4">
+              <ChatInput
+                onSend={onSendMessage}
+                onUploadDocument={onUploadDocument}
+                disabled={isLoading}
+                isSpeaking={isSpeaking}
+                currentModel={currentSession.model}
+                onChangeModel={onChangeModel}
+                isProcessingFile={isProcessingFile}
+                isWebSearchActive={isWebSearchActive}
+                onToggleWebSearch={onToggleWebSearch}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {isSearchModalOpen && (
+        <SearchModal
+          isOpen={isSearchModalOpen}
+          onClose={() => setIsSearchModalOpen(false)}
+          onSearchResults={handleSearchResults}
+          context={searchContext}
+        />
+      )}
+    </div>
+  );
+};

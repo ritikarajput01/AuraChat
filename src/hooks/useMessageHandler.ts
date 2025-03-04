@@ -50,9 +50,9 @@ export function useMessageHandler(
       // Map our internal model names to Mistral API model names
       const apiModelName = mapToApiModelName(modelId);
       
-      // Prepare messages for the API call - only include messages up to the last user message
-      let apiMessages = [];
+      // Get all previous messages to maintain conversation context
       const sessionMessages = [...currentSession.messages];
+      let apiMessages = [];
       
       // For regeneration, remove the last assistant message if it exists
       if (isRegeneration && sessionMessages.length > 0 && sessionMessages[sessionMessages.length - 1].role === 'assistant') {
@@ -78,21 +78,36 @@ export function useMessageHandler(
         }
       }
       
-      // Add a system message to instruct the model to respond in the detected language
+      // Add a system message with clear instructions
       apiMessages.push({
         role: 'system',
-        content: getLanguageSystemPrompt(detectedLanguage)
+        content: `You are an intelligent AI assistant named AuraChat, specialized in providing accurate, helpful, and detailed responses. 
+        ${getLanguageSystemPrompt(detectedLanguage)}
+        
+        Important guidelines:
+        1. Analyze the user's question carefully and provide a direct, relevant answer
+        2. If the user asks about code, provide working, well-commented code examples
+        3. If the user asks for explanations, be thorough but concise
+        4. Always maintain the conversation context and refer to previous messages when relevant
+        5. If you're unsure about something, acknowledge it rather than making up information
+        6. Format your responses using markdown for readability
+        
+        Your primary goal is to be as helpful and accurate as possible.`
       });
       
-      // Format messages for the API - ensure we end with a user message
-      for (let i = 0; i < sessionMessages.length; i++) {
+      // Add conversation history to maintain context
+      // Only include the last 10 messages to avoid token limits
+      const historyLimit = 10;
+      const startIdx = Math.max(0, sessionMessages.length - historyLimit);
+      
+      for (let i = startIdx; i < sessionMessages.length; i++) {
         apiMessages.push({
           role: sessionMessages[i].role,
           content: sessionMessages[i].content
         });
       }
       
-      // If we're not regenerating and there are no messages, add the current message
+      // If we're not regenerating and there are no user messages, add the current message
       if (apiMessages.length === 1 && !isRegeneration) { // Only system message
         apiMessages.push({
           role: 'user',
@@ -105,7 +120,7 @@ export function useMessageHandler(
         // If the last message isn't from a user, we need to fix this
         apiMessages.push({
           role: 'user',
-          content: 'Please continue.'
+          content: 'Please continue based on our conversation so far.'
         });
       }
 
@@ -113,9 +128,18 @@ export function useMessageHandler(
       const response = await mistralClient.current.chat({
         model: apiModelName,
         messages: apiMessages,
+        temperature: 0.7,
+        top_p: 0.95,
+        max_tokens: 2048,
       });
 
-      const { text, blocks } = extractCodeBlocks(response.choices[0].message.content);
+      // Get the response content
+      const responseContent = response.choices[0].message.content;
+
+      // Generate analysis for the response
+      const analysis = await generateAnalysis(responseContent, mistralClient.current);
+
+      const { text, blocks } = extractCodeBlocks(responseContent);
 
       // Get the last assistant message if we're regenerating
       let lastAssistantMessage: Message | undefined;
@@ -145,7 +169,8 @@ export function useMessageHandler(
         language: detectedLanguage,
         alternatives: isRegeneration ? alternatives : [],
         currentAlternativeIndex: 0,
-        originalContent: isRegeneration ? originalContent : text
+        originalContent: isRegeneration ? originalContent : text,
+        analysis: analysis // Add the analysis to the message
       };
 
       if (isRegeneration) {
@@ -195,6 +220,43 @@ export function useMessageHandler(
     }
   };
 
+  // Function to generate analysis for a message
+  const generateAnalysis = async (content: string, client: MistralClient): Promise<string> => {
+    try {
+      const analysisPrompt = `Please analyze the following message and provide a brief summary of its key points, tone, and any notable characteristics:
+
+${content}
+
+Focus on:
+1. Main topics covered
+2. Key arguments or explanations
+3. Technical complexity level
+4. Writing style and tone
+5. Notable features (code examples, citations, etc.)`;
+
+      const response = await client.chat({
+        model: "mistral-large-latest",
+        messages: [
+          {
+            role: "system",
+            content: "You are an expert at analyzing and summarizing content. Provide concise, insightful analysis."
+          },
+          {
+            role: "user",
+            content: analysisPrompt
+          }
+        ],
+        temperature: 0.3,
+        max_tokens: 500
+      });
+
+      return response.choices[0].message.content;
+    } catch (error) {
+      console.error("Error generating analysis:", error);
+      return "Analysis generation failed";
+    }
+  };
+
   const handleWebSearchMessage = async (content: string, isVoice: boolean = false) => {
     if (!mistralClient.current) {
       setChatState(prev => ({
@@ -239,24 +301,41 @@ ${searchResults}
 Please provide a comprehensive answer to the question based on these search results. 
 Include relevant information from the search results and cite your sources.
 Format your response in markdown with proper headings, lists, and citations.
+Be specific and directly address the user's question without going off-topic.
 `;
 
-      // Get AI response
+      // Get AI response with improved parameters
       const response = await mistralClient.current.chat({
-        model: "mistral-small-latest",
+        model: "mistral-large-latest",
         messages: [
           {
             role: 'system',
-            content: getLanguageSystemPrompt(detectedLanguage)
+            content: `You are an intelligent AI assistant named AuraChat, specialized in providing accurate, helpful, and detailed responses based on web search results.
+            ${getLanguageSystemPrompt(detectedLanguage)}
+            
+            Important guidelines:
+            1. Analyze the user's question carefully and provide a direct, relevant answer
+            2. Use the provided web search results to inform your response
+            3. Cite sources properly when using information from search results
+            4. Format your response using markdown for readability
+            5. If the search results don't contain relevant information, acknowledge this
+            
+            Your primary goal is to be as helpful and accurate as possible.`
           },
           { 
             role: "user", 
             content: prompt 
           }
         ],
+        temperature: 0.5,
+        top_p: 0.9,
+        max_tokens: 2048,
       });
 
       const { text, blocks } = extractCodeBlocks(response.choices[0].message.content);
+
+      // Generate analysis for the response
+      const analysis = await generateAnalysis(text, mistralClient.current);
 
       const assistantMessage: Message = {
         role: 'assistant',
@@ -267,7 +346,8 @@ Format your response in markdown with proper headings, lists, and citations.
         alternatives: [],
         currentAlternativeIndex: 0,
         originalContent: text,
-        webSearch: true
+        webSearch: true,
+        analysis: analysis
       };
 
       addMessage(assistantMessage);
@@ -305,38 +385,20 @@ Format your response in markdown with proper headings, lists, and citations.
 
   // Map our internal model names to Mistral API model names
   const mapToApiModelName = (modelId: string): string => {
-    // This mapping should be updated based on Mistral's actual API model names
     const modelMapping: Record<string, string> = {
-      'mistral-7b': 'mistral-7b-v0.1',
-      'mixtral-8x7b': 'mixtral-8x7b-v0.1',
       'mistral-large': 'mistral-large-latest',
-      'mistral-small': 'mistral-small-latest',
-      'mixtral-8x22b': 'mixtral-8x22b-latest',
       'codestral': 'codestral-latest',
-      'mathstral-7b': 'mathstral-7b-latest',
-      'mistral-large-2': 'mistral-large-2-latest',
-      'pixtral': 'pixtral-latest',
-      'ministral-3b': 'ministral-3b-latest',
-      'ministral-8b': 'ministral-8b-latest',
-      'codestral-mamba-7b': 'codestral-mamba-7b-latest',
-      'pixtral-large': 'pixtral-large-latest',
-      'mistral-small-3': 'mistral-small-3-latest',
-      'mistral-saba': 'mistral-saba-latest',
     };
     
-    return modelMapping[modelId] || 'mistral-small-latest'; // Fallback to small if mapping not found
+    return modelMapping[modelId] || 'mistral-large-latest';
   };
 
   const getErrorMessage = (error: any): string => {
     if (error.response) {
-      // The request was made and the server responded with a status code
-      // that falls out of the range of 2xx
       return `Server error: ${error.response.status} - ${error.response.data?.error || 'Unknown error'}`;
     } else if (error.request) {
-      // The request was made but no response was received
       return 'No response from server. Please check your internet connection.';
     } else {
-      // Something happened in setting up the request that triggered an Error
       return error.message || 'Unknown error occurred';
     }
   };

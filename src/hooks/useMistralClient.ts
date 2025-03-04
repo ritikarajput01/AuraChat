@@ -7,7 +7,14 @@ export function useMistralClient() {
   useEffect(() => {
     const apiKey = import.meta.env.VITE_MISTRAL_API_KEY;
     if (apiKey) {
-      mistralClient.current = new MistralClient(apiKey);
+      try {
+        mistralClient.current = new MistralClient(apiKey);
+        console.log('Mistral client initialized successfully');
+      } catch (error) {
+        console.error('Error initializing Mistral client:', error);
+      }
+    } else {
+      console.warn('No Mistral API key found in environment variables');
     }
   }, []);
 

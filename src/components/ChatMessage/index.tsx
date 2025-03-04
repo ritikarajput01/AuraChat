@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Message } from '../../types';
-import { Bot, User } from 'lucide-react';
+import { Bot, User, ChevronDown, ChevronUp } from 'lucide-react';
 import { MessageHeader } from './MessageHeader';
 import { MessageContent } from './MessageContent';
 import { MessageActions } from './MessageActions';
@@ -28,6 +28,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
 }) => {
   const isBot = message.role === 'assistant';
   const [isRegenerating, setIsRegenerating] = useState(false);
+  const [showAnalysis, setShowAnalysis] = useState(false);
   const regenerationTimeoutRef = useRef<number>();
 
   useEffect(() => {
@@ -113,6 +114,36 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
           onExecuteCode={onExecuteCode}
           isBot={isBot}
         />
+
+        {isBot && message.analysis && (
+          <div className="mt-4">
+            <button
+              onClick={() => setShowAnalysis(!showAnalysis)}
+              className="flex items-center gap-2 text-sm text-[#00f3ff]/70 hover:text-[#00f3ff] transition-colors"
+            >
+              {showAnalysis ? (
+                <>
+                  <ChevronUp className="w-4 h-4" />
+                  Hide Analysis
+                </>
+              ) : (
+                <>
+                  <ChevronDown className="w-4 h-4" />
+                  Show Analysis
+                </>
+              )}
+            </button>
+            
+            {showAnalysis && (
+              <div className="mt-3 p-4 rounded-lg bg-[#2a2a4a] border border-[#00f3ff]/30">
+                <h4 className="text-sm font-medium text-[#00f3ff] mb-2">Message Analysis</h4>
+                <div className="text-sm text-white/80">
+                  {message.analysis}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
         
         {isBot && isLastAssistantMessage && (
           <MessageActions 

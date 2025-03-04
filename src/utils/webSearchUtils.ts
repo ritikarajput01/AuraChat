@@ -17,22 +17,27 @@ export const searchWeb = async (query: string, apiKey: string): Promise<SearchRe
     // Simulate API call delay
     await new Promise(resolve => setTimeout(resolve, 1500));
     
-    // Return mock search results
+    // Return mock search results that are more relevant to the query
     return [
       {
-        title: "Result 1 for " + query,
-        url: "https://example.com/result1",
-        snippet: "This is a snippet from the first search result that matches your query about " + query
+        title: `${query} - Comprehensive Guide`,
+        url: "https://example.com/comprehensive-guide",
+        snippet: `This comprehensive guide covers everything you need to know about ${query}. It includes detailed explanations, examples, and best practices for implementation.`
       },
       {
-        title: "Result 2 for " + query,
-        url: "https://example.com/result2",
-        snippet: "Another relevant snippet from the second search result about " + query
+        title: `How to solve problems related to ${query}`,
+        url: "https://example.com/problem-solving",
+        snippet: `Learn effective strategies for solving common problems related to ${query}. This article provides step-by-step solutions with practical examples.`
       },
       {
-        title: "Result 3 for " + query,
-        url: "https://example.com/result3",
-        snippet: "A third snippet from another search result related to " + query
+        title: `Latest developments in ${query} (2025)`,
+        url: "https://example.com/latest-developments",
+        snippet: `Stay updated with the most recent advancements and innovations in ${query}. This article covers breakthroughs, new techniques, and future trends.`
+      },
+      {
+        title: `${query} for beginners: Getting started`,
+        url: "https://example.com/beginners-guide",
+        snippet: `A beginner-friendly introduction to ${query}. This guide breaks down complex concepts into easy-to-understand explanations with practical examples.`
       }
     ];
   } catch (error) {
@@ -112,12 +117,24 @@ ${searchResults}
 Please provide a comprehensive answer to the question based on these search results. 
 Include relevant information from the search results and cite your sources.
 Format your response in markdown with proper headings, lists, and citations.
+Be specific and directly address the user's question without going off-topic.
 `;
 
     // Get AI response
     const response = await mistralClient.chat({
-      model: "mistral-small-latest",
-      messages: [{ role: "user", content: prompt }],
+      model: "mistral-large-latest",
+      messages: [
+        {
+          role: "system",
+          content: "You are an AI assistant that provides accurate, helpful, and detailed responses based on web search results. Always directly address the user's question and stay on topic."
+        },
+        { 
+          role: "user", 
+          content: prompt 
+        }
+      ],
+      temperature: 0.5, // Lower temperature for more factual responses
+      top_p: 0.9,
     });
 
     return response.choices[0].message.content;

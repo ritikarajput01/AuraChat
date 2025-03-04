@@ -98,5 +98,9 @@ export const getLanguageSystemPrompt = (language: string): string => {
   const langName = getLanguageName(language);
   const nativeName = getNativeLanguageName(language);
   
-  return `Please respond in ${langName} (${nativeName}) language. Ensure your entire response is in this language, including explanations and comments.`;
+  if (language === 'en') {
+    return `Please respond in English. Ensure your entire response is clear, concise, and directly addresses the user's question.`;
+  }
+  
+  return `Please respond in ${langName} (${nativeName}) language. Ensure your entire response is in this language, including explanations and comments. Be clear, concise, and directly address the user's question.`;
 };

@@ -26,6 +26,10 @@ export default {
           '0%': { transform: 'scale(1)', opacity: '1' },
           '75%, 100%': { transform: 'scale(2)', opacity: '0' },
         },
+        float: {
+          '0%, 100%': { transform: 'translateY(0px)' },
+          '50%': { transform: 'translateY(-10px)' },
+        },
         'sound-wave': {
           '0%, 100%': { height: '4px', opacity: '0.6' },
           '50%': { height: '16px', opacity: '1' },

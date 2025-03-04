@@ -47,15 +47,15 @@
 }
 
 .empty-state-icon {
-  @apply w-16 h-16 rounded-2xl flex items-center justify-center bg-[#00f3ff]/20 border-2 border-[#00f3ff]/40;
+  @apply w-16 h-16 rounded-2xl flex items-center justify-center bg-[#00f3ff]/20 border-2 border-[#00f3ff]/40 shadow-lg shadow-[#00f3ff]/5;
 }
 
 .empty-state-title {
-  @apply text-2xl font-bold text-[#00f3ff];
+  @apply text-2xl font-bold bg-gradient-to-r from-[#00f3ff] to-[#bc13fe] bg-clip-text text-transparent drop-shadow-[0_0_10px_rgba(0,243,255,0.5)];
 }
 
 .empty-state-description {
-  @apply text-lg text-[#00f3ff]/80 max-w-xs mx-auto;
+  @apply text-lg text-[#00f3ff] drop-shadow-[0_0_8px_rgba(0,243,255,0.3)] max-w-xs mx-auto;
 }
 
 .feature-cards {
@@ -63,7 +63,7 @@
 }
 
 .feature-card {
-  @apply p-4 bg-[#1a1a3a]/90 backdrop-blur-xl border-2 border-[#00f3ff]/40 rounded-xl transition-colors cursor-pointer shadow-lg shadow-[#00f3ff]/5;
+  @apply p-4 bg-[#2a2a4a]/95 backdrop-blur-xl border-2 border-[#00f3ff]/40 shadow-lg shadow-[#00f3ff]/20 rounded-xl transition-colors cursor-pointer;
 }
 
 .feature-card:hover {
@@ -75,7 +75,7 @@
 }
 
 .feature-card:hover h3 {
-  @apply text-[#00f3ff];
+  text-shadow: 0 0 15px rgba(0, 243, 255, 0.7), 0 0 30px rgba(0, 243, 255, 0.5);
 }
 
 .feature-card p {
@@ -124,6 +124,12 @@
               0 0 45px rgba(188, 19, 254, 0.2);
 }
 
+.neon-glow-active {
+  box-shadow: 0 0 20px rgba(0, 243, 255, 0.5),
+              0 0 40px rgba(0, 243, 255, 0.3),
+              0 0 60px rgba(0, 243, 255, 0.2);
+}
+
 .neon-text {
   text-shadow: 0 0 15px rgba(0, 243, 255, 0.7),
                0 0 30px rgba(0, 243, 255, 0.5);
@@ -141,7 +147,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  background-image: linear-gradient(to bottom, var(--dark-bg), transparent, var(--dark-bg));
+  background-image: linear-gradient(to bottom, #0a0a1f, transparent, #0a0a1f);
   pointer-events: none;
   z-index: 10;
   opacity: 0.9;
@@ -150,7 +156,7 @@
 .cyber-border {
   position: relative;
   border: 2px solid rgba(0, 243, 255, 0.4);
-  transition: all 0.3s ease;
+  transition: all 0.3s;
 }
 
 .cyber-border:hover {
@@ -160,7 +166,7 @@
 /* Glass effect */
 .glass-panel {
   background-color: rgba(42, 42, 74, 0.95);
-  backdrop-filter: blur(12px);
+  backdrop-filter: blur(16px);
   border: 2px solid rgba(0, 243, 255, 0.4);
   box-shadow: 0 10px 25px rgba(0, 243, 255, 0.2);
 }
@@ -169,7 +175,7 @@
 .chat-input {
   background-color: #2a2a4a;
   border: 2px solid rgba(0, 243, 255, 0.6);
-  transition: all 0.3s ease;
+  transition: all 0.3s;
   color: white;
   box-shadow: 0 0 30px rgba(0, 243, 255, 0.2);
 }
@@ -423,7 +429,7 @@ pre {
   }
   
   /* Fix sidebar width on mobile */
-  .w-[280px] {
+  .w-\[280px\] {
     width: 250px;
   }
 }
@@ -476,4 +482,10 @@ pre {
   .prose pre {
     max-width: calc(100vw - 2rem) !important;
   }
+}
+
+/* Web search result styling */
+.web-search-result {
+  border-width: 2px;
+  border-style: solid;
 }

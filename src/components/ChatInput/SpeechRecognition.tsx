@@ -63,10 +63,10 @@ export const SpeechRecognition: React.FC<SpeechRecognitionProps> = ({
   return (
     <button
       onClick={toggleSpeechRecognition}
-      className={`p-2.5 md:p-3 rounded-lg transition-all ${
+      className={`p-2 md:p-3 rounded-lg transition-all ${
         isListening 
-          ? 'bg-red-500/40 border-2 border-red-500/80 text-red-400 neon-glow animate-pulse' 
-          : 'bg-[#2a2a4a] border-2 border-[#00f3ff]/60 text-[#00f3ff] hover:bg-[#3a3a5a] hover:border-[#00f3ff] hover:text-white shadow-[0_0_20px_rgba(0,243,255,0.1)]'
+          ? 'bg-red-500/80 border-2 border-red-400 text-white shadow-[0_0_15px_rgba(239,68,68,0.5)] animate-pulse' 
+          : 'bg-[#2a2a4a] border-2 border-[#00f3ff] text-[#00f3ff] hover:bg-[#3a3a5a] hover:border-[#00f3ff] hover:text-white shadow-[0_0_15px_rgba(0,243,255,0.2)]'
       }`}
       type="button"
       disabled={disabled || isSpeaking}
