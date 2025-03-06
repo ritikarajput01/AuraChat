@@ -9,7 +9,7 @@ export interface Message {
   currentAlternativeIndex?: number;
   originalContent?: string;
   webSearch?: boolean;
-  analysis?: string; // Add this field for message analysis
+  analysis?: string;
 }
 
 export interface CodeBlock {
@@ -26,7 +26,7 @@ export interface ChatSession {
   name: string;
   createdAt: number;
   messages: Message[];
-  model: MistralModel;
+  model: AIModel;
   language?: string;
 }
 
@@ -45,11 +45,11 @@ export interface VoiceConfig {
   volume: number;
 }
 
-export type MistralModel = 
+export type AIModel = 
   | 'mistral-large'
   | 'codestral';
 
-export const MISTRAL_MODELS: MistralModel[] = [
+export const AI_MODELS: AIModel[] = [
   'mistral-large',
   'codestral'
 ];
@@ -61,26 +61,29 @@ export const MODEL_CATEGORIES = [
   }
 ];
 
-export const MODEL_INFO: Record<MistralModel, {
+export const MODEL_INFO: Record<AIModel, {
   name: string;
   description: string;
   capabilities: string[];
   bestFor: string[];
   tokenLimit: number;
+  provider: 'mistral';
 }> = {
   'mistral-large': {
     name: 'Mistral Large',
     description: 'A powerful general-purpose model with strong reasoning capabilities.',
     capabilities: ['Complex Reasoning', 'Detailed Explanations', 'Advanced Coding'],
     bestFor: ['In-depth Analysis', 'Creative Writing', 'Technical Documentation'],
-    tokenLimit: 32768
+    tokenLimit: 32768,
+    provider: 'mistral'
   },
   'codestral': {
     name: 'Codestral',
     description: 'Specialized for programming with enhanced code generation and understanding.',
     capabilities: ['Code Generation', 'Debugging', 'Technical Explanations'],
     bestFor: ['Software Development', 'Code Review', 'Learning Programming'],
-    tokenLimit: 16384
+    tokenLimit: 16384,
+    provider: 'mistral'
   }
 };
 

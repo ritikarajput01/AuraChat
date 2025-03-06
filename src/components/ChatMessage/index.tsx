@@ -1,6 +1,6 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState } from 'react';
+import { Bot, User } from 'lucide-react';
 import { Message } from '../../types';
-import { Bot, User, ChevronDown, ChevronUp } from 'lucide-react';
 import { MessageHeader } from './MessageHeader';
 import { MessageContent } from './MessageContent';
 import { MessageActions } from './MessageActions';
@@ -13,7 +13,6 @@ interface ChatMessageProps {
   isLastAssistantMessage?: boolean;
   onSpeak?: (text: string) => void;
   onNavigate?: (direction: 'prev' | 'next') => void;
-  onSearchResults?: (results: string) => void;
 }
 
 export const ChatMessage: React.FC<ChatMessageProps> = ({ 
@@ -23,139 +22,66 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
   onRegenerate,
   isLastAssistantMessage,
   onSpeak,
-  onNavigate,
-  onSearchResults
+  onNavigate
 }) => {
   const isBot = message.role === 'assistant';
   const [isRegenerating, setIsRegenerating] = useState(false);
-  const [showAnalysis, setShowAnalysis] = useState(false);
-  const regenerationTimeoutRef = useRef<number>();
-
-  useEffect(() => {
-    if (isRegenerating && message.content !== "Regenerating...") {
-      setIsRegenerating(false);
-      if (regenerationTimeoutRef.current) {
-        clearTimeout(regenerationTimeoutRef.current);
-      }
-    }
-  }, [message.content, isRegenerating]);
-
-  useEffect(() => {
-    return () => {
-      if (regenerationTimeoutRef.current) {
-        clearTimeout(regenerationTimeoutRef.current);
-      }
-    };
-  }, []);
-
-  const handleSpeak = () => {
-    if (onSpeak && isBot) {
-      const cleanText = message.content
-        .replace(/```[\s\S]*?```/g, '')
-        .replace(/\[.*?\]/g, '')
-        .replace(/[*_~`]/g, '')
-        .replace(/\n\n/g, '. ')
-        .replace(/\n/g, ' ')
-        .trim();
-      
-      onSpeak(cleanText);
-    }
-  };
 
   const handleRegenerate = () => {
     if (onRegenerate && !isRegenerating) {
       setIsRegenerating(true);
       onRegenerate();
-      
-      regenerationTimeoutRef.current = window.setTimeout(() => {
-        setIsRegenerating(false);
-      }, 10000);
+      setTimeout(() => setIsRegenerating(false), 10000);
     }
   };
-
-  const handleNavigate = (direction: 'prev' | 'next') => {
-    if (onNavigate) {
-      onNavigate(direction);
-    }
-  };
-
-  // Calculate if this message has alternatives and how many
-  const hasAlternatives = isBot && 
-                         message.alternatives && 
-                         message.alternatives.length > 0;
-  
-  const totalAlternatives = message.alternatives?.length || 0;
-  const currentIndex = message.currentAlternativeIndex || 0;
-
-  // Check if this message was generated with web search
-  const isWebSearchResult = message.webSearch === true;
 
   return (
-    <div className={`flex gap-2 md:gap-6 p-2 md:p-6 rounded-xl md:rounded-2xl transition-all message-bubble ${
-      isBot ? 'assistant' : ''
-    } ${isWebSearchResult ? 'web-search-result border-[#00f3ff]/70' : ''}`}>
-      <div className={`shrink-0 w-8 h-8 md:w-12 md:h-12 rounded-lg md:rounded-xl flex items-center justify-center cyber-border ${
-        isBot ? 'bg-[#00f3ff]/10 text-[#00f3ff]' : 'bg-[#bc13fe]/10 text-[#bc13fe]'
-      }`}>
-        {isBot ? <Bot className="w-4 h-4 md:w-6 md:h-6" /> : <User className="w-4 h-4 md:w-6 md:h-6" />}
+    <div 
+      className={`
+        flex gap-3 md:gap-4 p-4 md:p-6 rounded-xl md:rounded-2xl transition-all
+        ${isBot 
+          ? 'bg-[#1a1a3a]/95 border-2 border-[#00f3ff]/30 shadow-lg shadow-[#00f3ff]/5' 
+          : 'bg-[#2a2a4a]/80 border-2 border-[#bc13fe]/30'
+        }
+        ${message.webSearch ? 'border-[#00f3ff] shadow-[0_0_20px_rgba(0,243,255,0.2)]' : ''}
+      `}
+    >
+      <div className={`
+        shrink-0 w-8 h-8 md:w-10 md:h-10 rounded-lg md:rounded-xl 
+        flex items-center justify-center
+        ${isBot 
+          ? 'bg-[#00f3ff]/10 text-[#00f3ff] border-2 border-[#00f3ff]/30' 
+          : 'bg-[#bc13fe]/10 text-[#bc13fe] border-2 border-[#bc13fe]/30'
+        }
+      `}>
+        {isBot ? <Bot className="w-4 h-4 md:w-5 md:h-5" /> : <User className="w-4 h-4 md:w-5 md:h-5" />}
       </div>
-      <div className="flex-1 min-w-0 overflow-hidden">
+
+      <div className="flex-1 min-w-0 space-y-3">
         <MessageHeader 
-          isBot={isBot} 
-          isVoice={message.isVoice} 
+          isBot={isBot}
+          isVoice={message.isVoice}
           isSpeaking={isSpeaking}
-          onSpeak={isBot ? handleSpeak : undefined}
+          onSpeak={isBot ? onSpeak : undefined}
           language={message.language}
-          isWebSearchResult={isWebSearchResult}
+          isWebSearch={message.webSearch}
         />
-        
+
         <MessageContent 
-          message={message} 
+          message={message}
           onExecuteCode={onExecuteCode}
           isBot={isBot}
         />
 
-        {isBot && message.analysis && (
-          <div className="mt-4">
-            <button
-              onClick={() => setShowAnalysis(!showAnalysis)}
-              className="flex items-center gap-2 text-sm text-[#00f3ff]/70 hover:text-[#00f3ff] transition-colors"
-            >
-              {showAnalysis ? (
-                <>
-                  <ChevronUp className="w-4 h-4" />
-                  Hide Analysis
-                </>
-              ) : (
-                <>
-                  <ChevronDown className="w-4 h-4" />
-                  Show Analysis
-                </>
-              )}
-            </button>
-            
-            {showAnalysis && (
-              <div className="mt-3 p-4 rounded-lg bg-[#2a2a4a] border border-[#00f3ff]/30">
-                <h4 className="text-sm font-medium text-[#00f3ff] mb-2">Message Analysis</h4>
-                <div className="text-sm text-white/80">
-                  {message.analysis}
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-        
         {isBot && isLastAssistantMessage && (
           <MessageActions 
             content={message.content}
             onRegenerate={handleRegenerate}
             isRegenerating={isRegenerating}
-            onNavigate={handleNavigate}
-            hasAlternatives={hasAlternatives}
-            currentAlternativeIndex={currentIndex}
-            totalAlternatives={totalAlternatives}
-            onSearchResults={onSearchResults}
-            isWebSearchResult={isWebSearchResult}
+            onNavigate={onNavigate}
+            hasAlternatives={!!message.alternatives?.length}
+            currentAlternativeIndex={message.currentAlternativeIndex}
+            totalAlternatives={message.alternatives?.length || 0}
           />
         )}
       </div>

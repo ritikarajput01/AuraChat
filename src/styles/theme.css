@@ -1,0 +1,54 @@
+/* Cyberpunk theme */
+.cyberpunk-gradient {
+  background: linear-gradient(45deg, var(--neon-blue), var(--neon-purple));
+}
+
+.neon-glow {
+  box-shadow: 0 0 15px rgba(0, 243, 255, 0.3),
+              0 0 30px rgba(0, 243, 255, 0.2),
+              0 0 45px rgba(188, 19, 254, 0.2);
+}
+
+.neon-glow-active {
+  box-shadow: 0 0 20px rgba(0, 243, 255, 0.5),
+              0 0 40px rgba(0, 243, 255, 0.3),
+              0 0 60px rgba(0, 243, 255, 0.2);
+}
+
+.neon-text {
+  text-shadow: 0 0 15px rgba(0, 243, 255, 0.7),
+               0 0 30px rgba(0, 243, 255, 0.5);
+}
+
+.cyber-grid {
+  background-image: 
+    linear-gradient(rgba(0, 243, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 243, 255, 0.05) 1px, transparent 1px);
+  background-size: 30px 30px;
+  position: relative;
+}
+
+.cyber-grid::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(to bottom, #0a0a1f, transparent, #0a0a1f);
+  pointer-events: none;
+  z-index: 10;
+  opacity: 0.9;
+}
+
+.cyber-border {
+  position: relative;
+  border: 2px solid rgba(0, 243, 255, 0.4);
+  transition: all 0.3s;
+}
+
+.cyber-border:hover {
+  border-color: rgba(0, 243, 255, 0.8);
+}
+
+/* Glass effect */
+.glass-panel {
+  @apply bg-[#2a2a4a]/95 backdrop-blur-[16px] border-2 border-[#00f3ff]/40 shadow-[0_10px_25px_rgba(0,243,255,0.2)];
+}

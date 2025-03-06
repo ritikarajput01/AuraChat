@@ -1,0 +1,42 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --neon-blue: #00f3ff;
+  --neon-purple: #bc13fe;
+  --dark-bg: #0a0a1f;
+  --panel-bg: #1a1a3a;
+}
+
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  body {
+    background-color: var(--dark-bg);
+    color: #fff;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    @apply antialiased min-h-screen overflow-hidden;
+  }
+
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  ::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Hide scrollbar for IE, Edge and Firefox */
+  * {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+
+  ::selection {
+    @apply bg-[#00f3ff]/30 text-white;
+  }
+
+  #root {
+    @apply h-screen overflow-hidden;
+  }
+}

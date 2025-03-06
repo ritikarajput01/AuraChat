@@ -1,14 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Mic, Send, Square, Plus, Loader2, X, Globe } from 'lucide-react';
-import { MistralModel, MISTRAL_MODELS } from '../types';
+import { Mic, Send, Square, Plus, Loader2, Globe } from 'lucide-react';
+import { AIModel, AI_MODELS } from '../types';
 
 interface ChatInputProps {
   onSend: (message: string, isVoice?: boolean) => void;
   onUploadDocument: (file: File) => void;
   disabled?: boolean;
   isSpeaking: boolean;
-  currentModel: MistralModel;
-  onChangeModel: (model: MistralModel) => void;
+  currentModel: AIModel;
+  onChangeModel: (model: AIModel) => void;
   isProcessingFile?: boolean;
   isWebSearchActive?: boolean;
   onToggleWebSearch?: () => void;
@@ -71,7 +71,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   const adjustTextareaHeight = () => {
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto';
-      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+      textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 120)}px`;
     }
   };
 
@@ -135,10 +135,10 @@ export const ChatInput: React.FC<ChatInputProps> = ({
       <div className="flex flex-col gap-2 md:gap-3">
         <select
           value={currentModel}
-          onChange={(e) => onChangeModel(e.target.value as MistralModel)}
+          onChange={(e) => onChangeModel(e.target.value as AIModel)}
           className="w-full md:w-40 px-3 py-2 md:py-2.5 rounded-lg bg-[#2a2a4a] border-2 border-[#00f3ff]/60 text-[#00f3ff] text-sm md:text-base font-medium focus:outline-none focus:ring-2 focus:ring-[#00f3ff]/50 focus:border-[#00f3ff] transition-all hover:border-[#00f3ff]/80"
         >
-          {MISTRAL_MODELS.map(model => (
+          {AI_MODELS.map(model => (
             <option key={model} value={model} className="bg-[#2a2a4a] text-[#00f3ff]">
               {model}
             </option>
@@ -157,13 +157,13 @@ export const ChatInput: React.FC<ChatInputProps> = ({
               onClick={handleRemoveFile}
               className="p-1 hover:bg-[#4a4a6a] rounded-lg transition-colors text-[#00f3ff]/70 hover:text-[#00f3ff]"
             >
-              <X className="w-4 h-4" />
+              <Loader2 className="w-4 h-4 animate-spin" />
             </button>
           </div>
         )}
 
         <div className="flex gap-2 md:gap-3">
-          <div className="relative flex-1">
+          <div className="relative flex-1 min-w-0">
             <input
               type="file"
               ref={fileInputRef}
@@ -194,32 +194,29 @@ export const ChatInput: React.FC<ChatInputProps> = ({
                   ? "Type or speak your message..." 
                   : "Type your message..."
               }
-              className="w-full pl-10 pr-3 py-2.5 md:py-3 rounded-lg bg-[#2a2a4a] border-2 border-[#00f3ff]/60 text-white placeholder-[#00f3ff]/80 text-sm md:text-base min-h-[44px] md:min-h-[48px] max-h-[120px] resize-none focus:outline-none focus:ring-2 focus:ring-[#00f3ff]/50 focus:border-[#00f3ff] transition-all shadow-[0_0_20px_rgba(0,243,255,0.1)] hover:border-[#00f3ff]/80"
+              className="w-full pl-10 pr-3 py-2 md:py-2.5 rounded-lg bg-[#2a2a4a] border-2 border-[#00f3ff]/60 text-white placeholder-[#00f3ff]/80 text-sm md:text-base min-h-[40px] md:min-h-[44px] max-h-[120px] resize-none focus:outline-none focus:ring-2 focus:ring-[#00f3ff]/50 focus:border-[#00f3ff] transition-all shadow-[0_0_20px_rgba(0,243,255,0.1)] hover:border-[#00f3ff]/80"
               disabled={disabled || isListening}
               rows={1}
             />
           </div>
 
-          {/* Web Search Button */}
-          {onToggleWebSearch && (
-            <button
-              onClick={handleToggleWebSearch}
-              className={`p-2.5 md:p-3 rounded-lg transition-all ${
-                isWebSearchActive 
-                  ? 'bg-[#00f3ff]/40 border-2 border-[#00f3ff] text-white shadow-[0_0_15px_rgba(0,243,255,0.4)]' 
-                  : 'bg-[#2a2a4a] border-2 border-[#00f3ff]/60 text-[#00f3ff] hover:bg-[#3a3a5a] hover:border-[#00f3ff] hover:text-white shadow-[0_0_20px_rgba(0,243,255,0.1)]'
-              }`}
-              type="button"
-              title={isWebSearchActive ? "Web search active" : "Enable web search"}
-            >
-              <Globe className="w-4 h-4 md:w-5 md:h-5" />
-            </button>
-          )}
+          <button
+            onClick={handleToggleWebSearch}
+            className={`p-2 md:p-2.5 rounded-lg transition-all flex-shrink-0 ${
+              isWebSearchActive 
+                ? 'bg-[#00f3ff] border-2 border-[#00f3ff] text-[#1a1a3a] shadow-[0_0_20px_rgba(0,243,255,0.4)]' 
+                : 'bg-[#2a2a4a] border-2 border-[#00f3ff]/60 text-[#00f3ff]/60 hover:text-[#00f3ff] hover:border-[#00f3ff] hover:bg-[#00f3ff]/10'
+            }`}
+            type="button"
+            title={isWebSearchActive ? "Web search active - Click to disable" : "Enable web search"}
+          >
+            <Globe className={`w-4 h-4 md:w-5 md:h-5 transition-transform ${isWebSearchActive ? 'scale-110' : ''}`} />
+          </button>
 
           {isRecognitionSupported && (
             <button
               onClick={toggleSpeechRecognition}
-              className={`p-2.5 md:p-3 rounded-lg transition-all ${
+              className={`p-2 md:p-2.5 rounded-lg transition-all flex-shrink-0 ${
                 isListening 
                   ? 'bg-red-500/40 border-2 border-red-500/80 text-red-400 neon-glow animate-pulse' 
                   : 'bg-[#2a2a4a] border-2 border-[#00f3ff]/60 text-[#00f3ff] hover:bg-[#3a3a5a] hover:border-[#00f3ff] hover:text-white shadow-[0_0_20px_rgba(0,243,255,0.1)]'
@@ -231,10 +228,11 @@ export const ChatInput: React.FC<ChatInputProps> = ({
               {isListening ? <Square className="w-4 h-4 md:w-5 md:h-5" /> : <Mic className="w-4 h-4 md:w-5 md:h-5" />}
             </button>
           )}
+
           <button
             onClick={() => handleSend()}
             disabled={disabled || (!message.trim() && !selectedFile)}
-            className="p-2.5 md:p-3 rounded-lg bg-[#00f3ff]/30 text-[#00f3ff] border-2 border-[#00f3ff]/60 hover:bg-[#00f3ff]/40 hover:border-[#00f3ff] hover:text-white transition-all disabled:opacity-50 disabled:hover:bg-[#00f3ff]/30 shadow-[0_0_20px_rgba(0,243,255,0.1)]"
+            className="p-2 md:p-2.5 rounded-lg bg-[#00f3ff]/30 text-[#00f3ff] border-2 border-[#00f3ff]/60 hover:bg-[#00f3ff]/40 hover:border-[#00f3ff] hover:text-white transition-all disabled:opacity-50 disabled:hover:bg-[#00f3ff]/30 shadow-[0_0_20px_rgba(0,243,255,0.1)] flex-shrink-0"
             type="button"
           >
             <Send className="w-4 h-4 md:w-5 md:h-5" />
@@ -246,7 +244,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
           <div className="w-1.5 h-1.5 bg-[#00f3ff] rounded-full animate-soft-pulse"></div>
           <span>
             {isListening ? "Listening..." : 
-             isWebSearchActive ? "Web search mode active" : 
+             isWebSearchActive ? "Web search mode active - Results will include internet data" : 
              "AI is speaking..."}
           </span>
         </div>

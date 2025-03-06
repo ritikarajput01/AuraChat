@@ -1,0 +1,151 @@
+/* Empty state */
+.empty-state {
+  @apply flex flex-col items-center justify-center min-h-[calc(100vh-180px)] text-center space-y-6 px-4;
+}
+
+.empty-state-icon {
+  @apply w-16 h-16 rounded-2xl flex items-center justify-center bg-[#00f3ff]/20 border-2 border-[#00f3ff]/40 shadow-lg shadow-[#00f3ff]/5;
+}
+
+.empty-state-title {
+  @apply text-2xl font-bold bg-gradient-to-r from-[#00f3ff] to-[#bc13fe] bg-clip-text text-transparent drop-shadow-[0_0_10px_rgba(0,243,255,0.5)];
+}
+
+.empty-state-description {
+  @apply text-lg text-[#00f3ff] drop-shadow-[0_0_8px_rgba(0,243,255,0.3)] max-w-xs mx-auto;
+}
+
+/* Feature cards */
+.feature-cards {
+  @apply grid grid-cols-1 gap-3 w-full max-w-sm mx-auto mt-6;
+}
+
+.feature-card {
+  @apply p-4 bg-[#2a2a4a]/95 backdrop-blur-xl border-2 border-[#00f3ff]/40 shadow-lg shadow-[#00f3ff]/20 rounded-xl transition-colors cursor-pointer;
+}
+
+.feature-card:hover {
+  @apply bg-[#00f3ff]/10;
+}
+
+.feature-card h3 {
+  @apply font-semibold mb-2 text-lg text-[#00f3ff] transition-all;
+}
+
+.feature-card:hover h3 {
+  text-shadow: 0 0 15px rgba(0, 243, 255, 0.7), 0 0 30px rgba(0, 243, 255, 0.5);
+}
+
+.feature-card p {
+  @apply text-[#00f3ff]/80 transition-colors;
+}
+
+.feature-card:hover p {
+  @apply text-[#00f3ff];
+}
+
+/* Chat components */
+.chat-input {
+  @apply bg-[#2a2a4a] border-2 border-[#00f3ff]/60 transition-all text-white shadow-[0_0_30px_rgba(0,243,255,0.2)];
+}
+
+.chat-input::placeholder {
+  @apply text-[#00f3ff]/80;
+}
+
+.chat-input:focus {
+  @apply border-[#00f3ff] bg-[#3a3a5a] shadow-[0_0_0_2px_rgba(0,243,255,0.4),0_0_40px_rgba(0,243,255,0.3)];
+}
+
+.message-bubble {
+  @apply bg-[#2a2a4a]/95 border-2 border-[#00f3ff]/40 backdrop-blur-xl shadow-[0_10px_25px_rgba(0,243,255,0.2)];
+}
+
+.message-bubble.assistant {
+  @apply bg-[#00f3ff]/20 border-[#00f3ff]/50;
+}
+
+/* Code editor */
+.monaco-editor {
+  min-height: 200px !important;
+}
+
+pre {
+  @apply overflow-x-auto text-sm;
+}
+
+/* Typography */
+.prose {
+  @apply text-sm;
+}
+
+.prose h1 {
+  @apply text-xl;
+}
+
+.prose h2 {
+  @apply text-lg;
+}
+
+.prose h3 {
+  @apply text-base;
+}
+
+/* Responsive adjustments */
+@screen sm {
+  pre {
+    @apply text-base;
+  }
+  
+  .prose {
+    @apply text-base;
+  }
+  
+  .prose h1 {
+    @apply text-2xl;
+  }
+  
+  .prose h2 {
+    @apply text-xl;
+  }
+  
+  .prose h3 {
+    @apply text-lg;
+  }
+}
+
+@screen md {
+  .empty-state {
+    @apply min-h-[calc(100vh-240px)] space-y-12 px-6;
+  }
+
+  .empty-state-icon {
+    @apply w-32 h-32;
+  }
+
+  .empty-state-title {
+    @apply text-5xl;
+  }
+
+  .empty-state-description {
+    @apply text-2xl max-w-2xl;
+  }
+
+  .feature-cards {
+    @apply grid-cols-2 max-w-4xl gap-8;
+  }
+
+  .feature-card {
+    @apply p-8;
+  }
+
+  .monaco-editor {
+    min-height: 300px !important;
+  }
+}
+
+@screen lg {
+  .monaco-editor {
+    min-height: 400px !important;
+  }
+}

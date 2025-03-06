@@ -6,7 +6,6 @@ import { useMistralClient } from './hooks/useMistralClient';
 import { useMessageHandler } from './hooks/useMessageHandler';
 import { useCodeExecution } from './hooks/useCodeExecution';
 import { parseDocument } from './utils/documentParser';
-import { performWebSearch } from './utils/webSearchUtils';
 
 function App() {
   const {
@@ -29,7 +28,7 @@ function App() {
 
   const { voiceConfig, setVoiceConfig, initializeVoice, speakMessage, stopSpeaking } = useVoice(setChatState);
   const mistralClient = useMistralClient();
-  const { handleSendMessage, handleWebSearchMessage } = useMessageHandler(
+  const { handleSendMessage } = useMessageHandler(
     mistralClient,
     addMessage,
     setChatState,
@@ -79,10 +78,6 @@ function App() {
     }
   };
 
-  const handleNavigateResponseWrapper = (direction: 'prev' | 'next') => {
-    navigateResponse(direction);
-  };
-
   return (
     <Layout
       sessions={chatState.sessions}
@@ -109,7 +104,7 @@ function App() {
       onUploadDocument={handleUploadDocument}
       onChangeModel={handleChangeModel}
       onSpeak={handleSpeak}
-      onNavigateResponse={handleNavigateResponseWrapper}
+      onNavigateResponse={navigateResponse}
       onToggleWebSearch={toggleWebSearch}
     />
   );
