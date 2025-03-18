@@ -212,7 +212,7 @@ Check out our [Contributing Guide](CONTRIBUTING.md) for more details.
 
 ## License
 
-Distributed under the MIT License. See `LICENSE` for more information.
+Distributed under the [MIT License](./LICENSE). See `LICENSE` for more information.
 
 ---
 
